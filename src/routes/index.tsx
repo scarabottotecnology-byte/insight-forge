@@ -116,6 +116,9 @@ function Home() {
                 alt="Composição editorial com documentos e livro de negócios"
                 width={1408}
                 height={1760}
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
                 className="aspect-[4/5] w-full object-cover shadow-editorial"
               />
             </Parallax>
