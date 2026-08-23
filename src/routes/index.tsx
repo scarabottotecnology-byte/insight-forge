@@ -45,6 +45,7 @@ function Home() {
 
   return (
     <>
+      <ScrollProgress />
       {/* HERO */}
       <section className="band-dark relative overflow-hidden">
         <div className="container-editorial grid min-h-[86svh] items-center gap-16 pt-36 pb-24 lg:grid-cols-[1.05fr_0.95fr] lg:pt-40">
