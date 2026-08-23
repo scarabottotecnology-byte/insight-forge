@@ -83,13 +83,15 @@ function Home() {
 
           <Reveal delay={120} className="relative">
             <div className="absolute -top-6 -left-6 hidden h-24 w-24 border-t border-l border-primary/40 lg:block" />
-            <img
-              src={heroImage}
-              alt="Composição editorial com documentos e livro de negócios"
-              width={1408}
-              height={1760}
-              className="aspect-[4/5] w-full object-cover shadow-editorial"
-            />
+            <Parallax strength={34}>
+              <img
+                src={heroImage}
+                alt="Composição editorial com documentos e livro de negócios"
+                width={1408}
+                height={1760}
+                className="aspect-[4/5] w-full object-cover shadow-editorial"
+              />
+            </Parallax>
             <div className="absolute -right-6 -bottom-6 hidden h-24 w-24 border-r border-b border-primary/40 lg:block" />
           </Reveal>
         </div>
