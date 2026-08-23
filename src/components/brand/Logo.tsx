@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
  * Symbol: a champagne hairline vertex (two converging lines) inside a thin frame.
  * Variants: horizontal (default), vertical, symbol only.
  */
-export function LogoMark({ className }: { className?: string }) {
+export function LogoMark({ className }: { className?: string | undefined }) {
   return (
     <svg
       viewBox="0 0 32 32"

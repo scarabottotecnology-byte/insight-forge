@@ -134,7 +134,7 @@ function FilterGroup({
 }: {
   title: string;
   options: string[];
-  activeValue?: string;
+  activeValue: string | undefined;
   paramKey: "categoria" | "tipo";
 }) {
   return (
