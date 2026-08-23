@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import heroImage from "@/assets/hero-editorial.jpg";
+import { Marquee } from "@/components/site/Marquee";
+import { Parallax } from "@/components/site/Parallax";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal } from "@/components/site/Reveal";
+import { ScrollProgress } from "@/components/site/ScrollProgress";
 import { Button } from "@/components/ui/button";
 import { brl, categories, journal, products } from "@/lib/catalog";
 
@@ -42,6 +45,7 @@ function Home() {
 
   return (
     <>
+      <ScrollProgress />
       {/* HERO */}
       <section className="band-dark relative overflow-hidden">
         <div className="container-editorial grid min-h-[86svh] items-center gap-16 pt-36 pb-24 lg:grid-cols-[1.05fr_0.95fr] lg:pt-40">
@@ -80,13 +84,15 @@ function Home() {
 
           <Reveal delay={120} className="relative">
             <div className="absolute -top-6 -left-6 hidden h-24 w-24 border-t border-l border-primary/40 lg:block" />
-            <img
-              src={heroImage}
-              alt="Composição editorial com documentos e livro de negócios"
-              width={1408}
-              height={1760}
-              className="aspect-[4/5] w-full object-cover shadow-editorial"
-            />
+            <Parallax strength={34}>
+              <img
+                src={heroImage}
+                alt="Composição editorial com documentos e livro de negócios"
+                width={1408}
+                height={1760}
+                className="aspect-[4/5] w-full object-cover shadow-editorial"
+              />
+            </Parallax>
             <div className="absolute -right-6 -bottom-6 hidden h-24 w-24 border-r border-b border-primary/40 lg:block" />
           </Reveal>
         </div>
@@ -103,6 +109,24 @@ function Home() {
           ))}
         </div>
       </section>
+
+      {/* FAIXA EM MOVIMENTO */}
+      <section className="band-dark border-b border-border">
+        <Marquee
+          className="text-primary/80"
+          items={[
+            "Planilhas",
+            "Dashboards",
+            "E-books",
+            "Kits estratégicos",
+            "Modelos financeiros",
+            "Gestão",
+            "Produtividade",
+          ]}
+        />
+      </section>
+
+
 
       {/* CATEGORIAS */}
       <section className="band-light">
