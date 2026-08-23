@@ -14,17 +14,22 @@ import { useCart } from "@/lib/cart";
 import { brl, getProduct, products } from "@/lib/catalog";
 
 export const Route = createFileRoute("/produtos/$slug")({
-  loader: ({ params }) => {
+  loader: async ({ params }) => {
     const product = getProduct(params.slug);
     if (!product) throw notFound();
-    return { product };
+    return { product, origin: await getRequestOrigin() };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData) {
       return { meta: [{ title: "Produto indisponível — Vértice" }, { name: "robots", content: "noindex" }] };
     }
     const p = loaderData.product;
+    const origin = loaderData.origin ?? "";
+    const url = `/produtos/${params.slug}`;
+    const abs = (path: string) => (origin ? `${origin}${path}` : path);
     const title = `${p.name} — Vértice`;
+    const image = origin ? `${origin}${p.image}` : undefined;
+
     return {
       meta: [
         { title },
@@ -32,9 +37,15 @@ export const Route = createFileRoute("/produtos/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: p.tagline },
         { property: "og:type", content: "product" },
-        { property: "og:url", content: `/produtos/${params.slug}` },
+        { property: "og:url", content: url },
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { name: "twitter:image", content: image },
+            ]
+          : []),
       ],
-      links: [{ rel: "canonical", href: `/produtos/${params.slug}` }],
+      links: [{ rel: "canonical", href: url }],
       scripts: [
         {
           type: "application/ld+json",
@@ -44,9 +55,11 @@ export const Route = createFileRoute("/produtos/$slug")({
             name: p.name,
             description: p.tagline,
             category: p.category,
+            image: image ? [image] : undefined,
             brand: { "@type": "Brand", name: "Vértice" },
             offers: {
               "@type": "Offer",
+              url: abs(url),
               price: p.price,
               priceCurrency: "BRL",
               availability: "https://schema.org/InStock",
@@ -59,10 +72,22 @@ export const Route = createFileRoute("/produtos/$slug")({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Início", item: "/" },
-              { "@type": "ListItem", position: 2, name: "Catálogo", item: "/produtos" },
-              { "@type": "ListItem", position: 3, name: p.name, item: `/produtos/${params.slug}` },
+              { "@type": "ListItem", position: 1, name: "Início", item: abs("/") },
+              { "@type": "ListItem", position: 2, name: "Catálogo", item: abs("/produtos") },
+              { "@type": "ListItem", position: 3, name: p.name, item: abs(url) },
             ],
+          }),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: p.faq.map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
           }),
         },
       ],
@@ -70,6 +95,7 @@ export const Route = createFileRoute("/produtos/$slug")({
   },
   component: ProductPage,
 });
+
 
 function ProductPage() {
   const { product } = Route.useLoaderData();
