@@ -8,27 +8,53 @@ import { Reveal } from "@/components/site/Reveal";
 import { ScrollProgress } from "@/components/site/ScrollProgress";
 import { Button } from "@/components/ui/button";
 import { brl, categories, journal, products } from "@/lib/catalog";
+import { getRequestOrigin } from "@/lib/origin.functions";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Vértice — Ferramentas de negócios, finanças e gestão" },
-      {
-        name: "description",
-        content:
-          "Planilhas, dashboards, modelos e e-books profissionais para transformar conhecimento em execução. Download imediato e atualizações vitalícias.",
-      },
-      { property: "og:title", content: "Vértice — Ferramentas de negócios, finanças e gestão" },
-      {
-        property: "og:description",
-        content: "Uma boutique digital de conhecimento e ferramentas profissionais.",
-      },
-      { property: "og:url", content: "/" },
-    ],
-    links: [{ rel: "canonical", href: "/" }],
-  }),
+  loader: async () => ({ origin: await getRequestOrigin() }),
+  head: ({ loaderData }) => {
+    const origin = loaderData?.origin ?? "";
+    const title = "Vértice — Ferramentas de negócios, finanças e gestão";
+    const description =
+      "Planilhas, dashboards, modelos e e-books profissionais para transformar conhecimento em execução. Download imediato e atualizações vitalícias.";
+    const image = origin ? `${origin}${heroImage}` : undefined;
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        {
+          property: "og:description",
+          content: "Uma boutique digital de conhecimento e ferramentas profissionais.",
+        },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: "/" },
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { name: "twitter:image", content: image },
+            ]
+          : []),
+      ],
+      links: [{ rel: "canonical", href: "/" }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "Vértice Business Tools",
+            description,
+            url: origin || undefined,
+          }),
+        },
+      ],
+    };
+  },
   component: Home,
 });
+
 
 const trust = [
   { label: "Ferramentas aplicáveis", note: "Estruturas prontas para uso real" },
