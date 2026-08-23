@@ -107,6 +107,24 @@ function Home() {
         </div>
       </section>
 
+      {/* FAIXA EM MOVIMENTO */}
+      <section className="band-dark border-b border-border">
+        <Marquee
+          className="text-primary/80"
+          items={[
+            "Planilhas",
+            "Dashboards",
+            "E-books",
+            "Kits estratégicos",
+            "Modelos financeiros",
+            "Gestão",
+            "Produtividade",
+          ]}
+        />
+      </section>
+
+
+
       {/* CATEGORIAS */}
       <section className="band-light">
         <div className="container-editorial py-24 lg:py-32">
