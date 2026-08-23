@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import heroImage from "@/assets/hero-editorial.jpg";
+import { Marquee } from "@/components/site/Marquee";
+import { Parallax } from "@/components/site/Parallax";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal } from "@/components/site/Reveal";
+import { ScrollProgress } from "@/components/site/ScrollProgress";
 import { Button } from "@/components/ui/button";
 import { brl, categories, journal, products } from "@/lib/catalog";
 
