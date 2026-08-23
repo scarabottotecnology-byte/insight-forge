@@ -1,0 +1,352 @@
+[
+  {
+    "title": "[V-001] Naming, identidade e logo VÉRTICE",
+    "body": "**Fase:** Fase 0 — Fundação (concluído)\n**Prioridade:** ✅\n**Estimativa:**  pontos\n\n## Descrição\nNaming, identidade e logo VÉRTICE.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "✅"
+    ]
+  },
+  {
+    "title": "[V-003] Header/Footer, navegação e rotas base",
+    "body": "**Fase:** Fase 0 — Fundação (concluído)\n**Prioridade:** ✅\n**Estimativa:**  pontos\n\n## Descrição\nHeader/Footer, navegação e rotas base.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "✅"
+    ]
+  },
+  {
+    "title": "[V-005] Página de produto (landing) com FAQ e cross-sell",
+    "body": "**Fase:** Fase 0 — Fundação (concluído)\n**Prioridade:** ✅\n**Estimativa:**  pontos\n\n## Descrição\nPágina de produto (landing) com FAQ e cross-sell.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "✅"
+    ]
+  },
+  {
+    "title": "[V-007] Área do cliente (estrutura) e Insights",
+    "body": "**Fase:** Fase 0 — Fundação (concluído)\n**Prioridade:** ✅\n**Estimativa:**  pontos\n\n## Descrição\nÁrea do cliente (estrutura) e Insights.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "✅"
+    ]
+  },
+  {
+    "title": "[V-009] Efeitos de rolagem: progress bar, parallax, marquee",
+    "body": "**Fase:** Fase 0 — Fundação (concluído)\n**Prioridade:** ✅\n**Estimativa:** ---\n\n## Fase 1 — Backend e Contas (P0) pontos\n\n## Descrição\nEfeitos de rolagem: progress bar, parallax, marquee.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "✅"
+    ]
+  },
+  {
+    "title": "[V-101] Ativar Lovable Cloud (banco, storage, auth)",
+    "body": "**Fase:** Fase 1 — Backend e Contas (P0)\n**Prioridade:** P0\n**Estimativa:** 1 pontos\n\n## Descrição\nAtivar Lovable Cloud (banco, storage, auth).\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p0"
+    ]
+  },
+  {
+    "title": "[V-102] Modelagem: `products`, `orders`, `order_items`, `downloads`, `profiles` + RLS e grants",
+    "body": "**Fase:** Fase 1 — Backend e Contas (P0)\n**Prioridade:** P0\n**Estimativa:** 3 pontos\n\n## Descrição\nModelagem: `products`, `orders`, `order_items`, `downloads`, `profiles` + RLS e grants.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p0"
+    ]
+  },
+  {
+    "title": "[V-103] Migrar catálogo estático para o banco (seed via migração)",
+    "body": "**Fase:** Fase 1 — Backend e Contas (P0)\n**Prioridade:** P0\n**Estimativa:** 2 pontos\n\n## Descrição\nMigrar catálogo estático para o banco (seed via migração).\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p0"
+    ]
+  },
+  {
+    "title": "[V-104] Autenticação e-mail/senha + recuperação de senha",
+    "body": "**Fase:** Fase 1 — Backend e Contas (P0)\n**Prioridade:** P0\n**Estimativa:** 3 pontos\n\n## Descrição\nAutenticação e-mail/senha + recuperação de senha.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p0"
+    ]
+  },
+  {
+    "title": "[V-105] Google Sign-In",
+    "body": "**Fase:** Fase 1 — Backend e Contas (P0)\n**Prioridade:** P1\n**Estimativa:** 1 pontos\n\n## Descrição\nGoogle Sign-In.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-106] Tabela `user_roles` + função `has_role` (admin/cliente)",
+    "body": "**Fase:** Fase 1 — Backend e Contas (P0)\n**Prioridade:** P0\n**Estimativa:** 2 pontos\n\n## Descrição\nTabela `user_roles` + função `has_role` (admin/cliente).\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p0"
+    ]
+  },
+  {
+    "title": "[V-107] Proteger `/conta` com gate de rota autenticada",
+    "body": "**Fase:** Fase 1 — Backend e Contas (P0)\n**Prioridade:** P0\n**Estimativa:** 1 pontos\n\n## Descrição\nProteger `/conta` com gate de rota autenticada.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p0"
+    ]
+  },
+  {
+    "title": "[V-201] Integração de pagamento (checkout, Pix/cartão/boleto)",
+    "body": "**Fase:** Fase 2 — Pagamento e Entrega Digital (P0)\n**Prioridade:** P0\n**Estimativa:** 5 pontos\n\n## Descrição\nIntegração de pagamento (checkout, Pix/cartão/boleto).\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p0"
+    ]
+  },
+  {
+    "title": "[V-202] Webhook de confirmação → criar pedido e liberar acesso",
+    "body": "**Fase:** Fase 2 — Pagamento e Entrega Digital (P0)\n**Prioridade:** P0\n**Estimativa:** 3 pontos\n\n## Descrição\nWebhook de confirmação → criar pedido e liberar acesso.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p0"
+    ]
+  },
+  {
+    "title": "[V-203] Storage privado dos arquivos + links assinados temporários",
+    "body": "**Fase:** Fase 2 — Pagamento e Entrega Digital (P0)\n**Prioridade:** P0\n**Estimativa:** 3 pontos\n\n## Descrição\nStorage privado dos arquivos + links assinados temporários.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p0"
+    ]
+  },
+  {
+    "title": "[V-204] Limite de downloads por pedido e log de auditoria",
+    "body": "**Fase:** Fase 2 — Pagamento e Entrega Digital (P0)\n**Prioridade:** P1\n**Estimativa:** 2 pontos\n\n## Descrição\nLimite de downloads por pedido e log de auditoria.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-205] E-mail transacional: confirmação de compra + acesso",
+    "body": "**Fase:** Fase 2 — Pagamento e Entrega Digital (P0)\n**Prioridade:** P0\n**Estimativa:** 2 pontos\n\n## Descrição\nE-mail transacional: confirmação de compra + acesso.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p0"
+    ]
+  },
+  {
+    "title": "[V-206] Emissão/registro fiscal e recibo em PDF",
+    "body": "**Fase:** Fase 2 — Pagamento e Entrega Digital (P0)\n**Prioridade:** P2\n**Estimativa:** 3 pontos\n\n## Descrição\nEmissão/registro fiscal e recibo em PDF.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p2"
+    ]
+  },
+  {
+    "title": "[V-207] Cupons reais no banco (validade, uso único, % ou fixo)",
+    "body": "**Fase:** Fase 2 — Pagamento e Entrega Digital (P0)\n**Prioridade:** P1\n**Estimativa:** 2 pontos\n\n## Descrição\nCupons reais no banco (validade, uso único, % ou fixo).\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-301] \"Meus produtos\" e \"Downloads\" com dados reais",
+    "body": "**Fase:** Fase 3 — Experiência do Cliente (P1)\n**Prioridade:** P1\n**Estimativa:** 2 pontos\n\n## Descrição\n\"Meus produtos\" e \"Downloads\" com dados reais.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-302] Histórico de pedidos com status e reenvio de acesso",
+    "body": "**Fase:** Fase 3 — Experiência do Cliente (P1)\n**Prioridade:** P1\n**Estimativa:** 2 pontos\n\n## Descrição\nHistórico de pedidos com status e reenvio de acesso.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-303] Favoritos persistidos por usuário",
+    "body": "**Fase:** Fase 3 — Experiência do Cliente (P1)\n**Prioridade:** P2\n**Estimativa:** 1 pontos\n\n## Descrição\nFavoritos persistidos por usuário.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p2"
+    ]
+  },
+  {
+    "title": "[V-304] Edição de dados, senha e preferências de comunicação",
+    "body": "**Fase:** Fase 3 — Experiência do Cliente (P1)\n**Prioridade:** P2\n**Estimativa:** 2 pontos\n\n## Descrição\nEdição de dados, senha e preferências de comunicação.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p2"
+    ]
+  },
+  {
+    "title": "[V-305] Central de suporte com ticket por pedido",
+    "body": "**Fase:** Fase 3 — Experiência do Cliente (P1)\n**Prioridade:** P2\n**Estimativa:** 3 pontos\n\n## Descrição\nCentral de suporte com ticket por pedido.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p2"
+    ]
+  },
+  {
+    "title": "[V-306] Avaliações e depoimentos verificados por compra",
+    "body": "**Fase:** Fase 3 — Experiência do Cliente (P1)\n**Prioridade:** P2\n**Estimativa:** 3 pontos\n\n## Descrição\nAvaliações e depoimentos verificados por compra.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p2"
+    ]
+  },
+  {
+    "title": "[V-307] Versionamento de produto e notificação de atualização gratuita",
+    "body": "**Fase:** Fase 3 — Experiência do Cliente (P1)\n**Prioridade:** P3\n**Estimativa:** 3 pontos\n\n## Descrição\nVersionamento de produto e notificação de atualização gratuita.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p3"
+    ]
+  },
+  {
+    "title": "[V-401] Insights com posts reais (CMS no banco) e página de artigo",
+    "body": "**Fase:** Fase 4 — Conteúdo e Aquisição (P1)\n**Prioridade:** P1\n**Estimativa:** 3 pontos\n\n## Descrição\nInsights com posts reais (CMS no banco) e página de artigo.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-402] Captura de leads + isca digital (mini planilha gratuita)",
+    "body": "**Fase:** Fase 4 — Conteúdo e Aquisição (P1)\n**Prioridade:** P1\n**Estimativa:** 2 pontos\n\n## Descrição\nCaptura de leads + isca digital (mini planilha gratuita).\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-403] Newsletter e automação de boas-vindas",
+    "body": "**Fase:** Fase 4 — Conteúdo e Aquisição (P1)\n**Prioridade:** P2\n**Estimativa:** 2 pontos\n\n## Descrição\nNewsletter e automação de boas-vindas.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p2"
+    ]
+  },
+  {
+    "title": "[V-404] Sitemap.xml e robots dinâmicos",
+    "body": "**Fase:** Fase 4 — Conteúdo e Aquisição (P1)\n**Prioridade:** P1\n**Estimativa:** 1 pontos\n\n## Descrição\nSitemap.xml e robots dinâmicos.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-405] JSON-LD Article/FAQ nas páginas de conteúdo",
+    "body": "**Fase:** Fase 4 — Conteúdo e Aquisição (P1)\n**Prioridade:** P2\n**Estimativa:** 1 pontos\n\n## Descrição\nJSON-LD Article/FAQ nas páginas de conteúdo.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p2"
+    ]
+  },
+  {
+    "title": "[V-406] Analytics de eventos (view_item, add_to_cart, purchase)",
+    "body": "**Fase:** Fase 4 — Conteúdo e Aquisição (P1)\n**Prioridade:** P1\n**Estimativa:** 2 pontos\n\n## Descrição\nAnalytics de eventos (view_item, add_to_cart, purchase).\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-407] Landing pages de campanha por segmento",
+    "body": "**Fase:** Fase 4 — Conteúdo e Aquisição (P1)\n**Prioridade:** P3\n**Estimativa:** 3 pontos\n\n## Descrição\nLanding pages de campanha por segmento.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p3"
+    ]
+  },
+  {
+    "title": "[V-501] Painel admin: CRUD de produtos e upload de arquivos",
+    "body": "**Fase:** Fase 5 — Admin e Operação (P1)\n**Prioridade:** P1\n**Estimativa:** 5 pontos\n\n## Descrição\nPainel admin: CRUD de produtos e upload de arquivos.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-502] Gestão de pedidos, reembolsos e revogação de acesso",
+    "body": "**Fase:** Fase 5 — Admin e Operação (P1)\n**Prioridade:** P1\n**Estimativa:** 3 pontos\n\n## Descrição\nGestão de pedidos, reembolsos e revogação de acesso.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-503] Gestão de cupons e campanhas",
+    "body": "**Fase:** Fase 5 — Admin e Operação (P1)\n**Prioridade:** P2\n**Estimativa:** 2 pontos\n\n## Descrição\nGestão de cupons e campanhas.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p2"
+    ]
+  },
+  {
+    "title": "[V-504] Dashboard de vendas (receita, ticket médio, top produtos)",
+    "body": "**Fase:** Fase 5 — Admin e Operação (P1)\n**Prioridade:** P2\n**Estimativa:** 3 pontos\n\n## Descrição\nDashboard de vendas (receita, ticket médio, top produtos).\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p2"
+    ]
+  },
+  {
+    "title": "[V-505] Exportação CSV de pedidos e clientes",
+    "body": "**Fase:** Fase 5 — Admin e Operação (P1)\n**Prioridade:** P3\n**Estimativa:** 1 pontos\n\n## Descrição\nExportação CSV de pedidos e clientes.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p3"
+    ]
+  },
+  {
+    "title": "[V-601] Testes E2E do fluxo comprar → pagar → baixar",
+    "body": "**Fase:** Fase 6 — Qualidade, Performance e Conformidade (P1)\n**Prioridade:** P1\n**Estimativa:** 3 pontos\n\n## Descrição\nTestes E2E do fluxo comprar → pagar → baixar.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-602] Acessibilidade AA (foco visível, contraste, teclado, ARIA)",
+    "body": "**Fase:** Fase 6 — Qualidade, Performance e Conformidade (P1)\n**Prioridade:** P1\n**Estimativa:** 3 pontos\n\n## Descrição\nAcessibilidade AA (foco visível, contraste, teclado, ARIA).\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-603] Performance: imagens responsivas, lazy loading, Core Web Vitals",
+    "body": "**Fase:** Fase 6 — Qualidade, Performance e Conformidade (P1)\n**Prioridade:** P1\n**Estimativa:** 2 pontos\n\n## Descrição\nPerformance: imagens responsivas, lazy loading, Core Web Vitals.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-604] Estados de erro/vazio/carregamento em todas as rotas",
+    "body": "**Fase:** Fase 6 — Qualidade, Performance e Conformidade (P1)\n**Prioridade:** P1\n**Estimativa:** 2 pontos\n\n## Descrição\nEstados de erro/vazio/carregamento em todas as rotas.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-605] LGPD: política de privacidade, termos, consentimento de cookies",
+    "body": "**Fase:** Fase 6 — Qualidade, Performance e Conformidade (P1)\n**Prioridade:** P0\n**Estimativa:** 2 pontos\n\n## Descrição\nLGPD: política de privacidade, termos, consentimento de cookies.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p0"
+    ]
+  },
+  {
+    "title": "[V-606] Scan de segurança e revisão de RLS",
+    "body": "**Fase:** Fase 6 — Qualidade, Performance e Conformidade (P1)\n**Prioridade:** P0\n**Estimativa:** 2 pontos\n\n## Descrição\nScan de segurança e revisão de RLS.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p0"
+    ]
+  },
+  {
+    "title": "[V-607] Domínio próprio, publicação e monitoramento",
+    "body": "**Fase:** Fase 6 — Qualidade, Performance e Conformidade (P1)\n**Prioridade:** P1\n**Estimativa:** 1 pontos\n\n## Descrição\nDomínio próprio, publicação e monitoramento.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p1"
+    ]
+  },
+  {
+    "title": "[V-701] Assinatura Vértice (acesso a toda a biblioteca)",
+    "body": "**Fase:** Fase 7 — Expansão (P3)\n**Prioridade:** P3\n**Estimativa:** 8 pontos\n\n## Descrição\nAssinatura Vértice (acesso a toda a biblioteca).\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p3"
+    ]
+  },
+  {
+    "title": "[V-702] Programa de afiliados",
+    "body": "**Fase:** Fase 7 — Expansão (P3)\n**Prioridade:** P3\n**Estimativa:** 5 pontos\n\n## Descrição\nPrograma de afiliados.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p3"
+    ]
+  },
+  {
+    "title": "[V-703] Bundles dinâmicos e precificação por kit",
+    "body": "**Fase:** Fase 7 — Expansão (P3)\n**Prioridade:** P3\n**Estimativa:** 3 pontos\n\n## Descrição\nBundles dinâmicos e precificação por kit.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p3"
+    ]
+  },
+  {
+    "title": "[V-704] Versão em inglês (i18n)",
+    "body": "**Fase:** Fase 7 — Expansão (P3)\n**Prioridade:** P3\n**Estimativa:** 5 pontos\n\n## Descrição\nVersão em inglês (i18n).\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p3"
+    ]
+  },
+  {
+    "title": "[V-705] Área de cursos/vídeo-aulas complementares",
+    "body": "**Fase:** Fase 7 — Expansão (P3)\n**Prioridade:** P3\n**Estimativa:** 8 pontos\n\n## Descrição\nÁrea de cursos/vídeo-aulas complementares.\n\n## Critérios de aceitação\n- [ ] Definir escopo técnico\n- [ ] Implementar\n- [ ] Revisar qualidade e segurança\n- [ ] Atualizar documentação, se necessário\n",
+    "labels": [
+      "p3"
+    ]
+  }
+]
