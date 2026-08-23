@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as ContaRouteImport } from './routes/conta'
 import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProdutosIndexRouteImport } from './routes/produtos.index'
 import { Route as ProdutosSlugRouteImport } from './routes/produtos.$slug'
 
@@ -36,6 +37,11 @@ const InsightsRoute = InsightsRouteImport.update({
   path: '/insights',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProdutosIndexRoute = ProdutosIndexRouteImport.update({
   id: '/produtos/',
   path: '/produtos/',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/carrinho': typeof CarrinhoRoute
   '/conta': typeof ContaRoute
   '/insights': typeof InsightsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/produtos/$slug': typeof ProdutosSlugRoute
   '/produtos/': typeof ProdutosIndexRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/carrinho': typeof CarrinhoRoute
   '/conta': typeof ContaRoute
   '/insights': typeof InsightsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/produtos/$slug': typeof ProdutosSlugRoute
   '/produtos': typeof ProdutosIndexRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/carrinho': typeof CarrinhoRoute
   '/conta': typeof ContaRoute
   '/insights': typeof InsightsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/produtos/$slug': typeof ProdutosSlugRoute
   '/produtos/': typeof ProdutosIndexRoute
 }
@@ -79,17 +88,25 @@ export interface FileRouteTypes {
     | '/carrinho'
     | '/conta'
     | '/insights'
+    | '/sitemap.xml'
     | '/produtos/$slug'
     | '/produtos/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/carrinho' | '/conta' | '/insights' | '/produtos/$slug' | '/produtos'
+    | '/'
+    | '/carrinho'
+    | '/conta'
+    | '/insights'
+    | '/sitemap.xml'
+    | '/produtos/$slug'
+    | '/produtos'
   id:
     | '__root__'
     | '/'
     | '/carrinho'
     | '/conta'
     | '/insights'
+    | '/sitemap.xml'
     | '/produtos/$slug'
     | '/produtos/'
   fileRoutesById: FileRoutesById
@@ -99,6 +116,7 @@ export interface RootRouteChildren {
   CarrinhoRoute: typeof CarrinhoRoute
   ContaRoute: typeof ContaRoute
   InsightsRoute: typeof InsightsRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ProdutosSlugRoute: typeof ProdutosSlugRoute
   ProdutosIndexRoute: typeof ProdutosIndexRoute
 }
@@ -133,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InsightsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/produtos/': {
       id: '/produtos/'
       path: '/produtos'
@@ -155,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   CarrinhoRoute: CarrinhoRoute,
   ContaRoute: ContaRoute,
   InsightsRoute: InsightsRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   ProdutosSlugRoute: ProdutosSlugRoute,
   ProdutosIndexRoute: ProdutosIndexRoute,
 }

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal } from "@/components/site/Reveal";
 import { categories, products } from "@/lib/catalog";
+import { getRequestOrigin } from "@/lib/origin.functions";
 import { cn } from "@/lib/utils";
 
 const searchSchema = z.object({
@@ -14,25 +15,59 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/produtos/")({
   validateSearch: searchSchema,
-  head: () => ({
-    meta: [
-      { title: "Catálogo — Vértice Business Tools" },
-      {
-        name: "description",
-        content:
-          "Planilhas, dashboards, kits, modelos e e-books de finanças, gestão e estratégia. Filtre por categoria, tipo e nível.",
-      },
-      { property: "og:title", content: "Catálogo — Vértice Business Tools" },
-      {
-        property: "og:description",
-        content: "Ferramentas profissionais para finanças, gestão e estratégia.",
-      },
-      { property: "og:url", content: "/produtos" },
-    ],
-    links: [{ rel: "canonical", href: "/produtos" }],
-  }),
+  loader: async () => ({ origin: await getRequestOrigin() }),
+  head: ({ loaderData }) => {
+    const origin = loaderData?.origin ?? "";
+    const title = "Catálogo de planilhas, dashboards e e-books — Vértice";
+    const description =
+      "Planilhas, dashboards, kits, modelos e e-books de finanças, gestão e estratégia. Filtre por categoria, tipo e nível.";
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        {
+          property: "og:description",
+          content: "Ferramentas profissionais para finanças, gestão e estratégia.",
+        },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: "/produtos" },
+      ],
+      links: [{ rel: "canonical", href: "/produtos" }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            name: "Catálogo Vértice",
+            numberOfItems: products.length,
+            itemListElement: products.map((p, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              name: p.name,
+              url: origin ? `${origin}/produtos/${p.slug}` : `/produtos/${p.slug}`,
+            })),
+          }),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Início", item: "/" },
+              { "@type": "ListItem", position: 2, name: "Catálogo", item: "/produtos" },
+            ],
+          }),
+        },
+      ],
+    };
+  },
   component: Catalog,
 });
+
 
 const types = ["Planilha", "Dashboard", "E-book", "Template", "Documento", "Checklist", "Kit"];
 
