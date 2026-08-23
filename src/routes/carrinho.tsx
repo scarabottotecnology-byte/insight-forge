@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Reveal } from "@/components/site/Reveal";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
-import { brl, getProduct, products } from "@/lib/catalog";
+import { brl, products } from "@/lib/catalog";
 
 export const Route = createFileRoute("/carrinho")({
   head: () => ({
@@ -214,5 +214,3 @@ function CartPage() {
     </>
   );
 }
-
-export const _unused = getProduct;
