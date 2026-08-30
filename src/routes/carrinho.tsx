@@ -205,8 +205,15 @@ function CartPage() {
               Finalizar compra
             </Button>
             <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
-              Entrega digital imediata por link seguro e temporário. Ao continuar você concorda com os
-              termos de uso e a política de licenciamento.
+              Entrega digital imediata por link seguro e temporário. Ao continuar você concorda com os{" "}
+              <Link to="/termos-de-uso" className="link-underline text-foreground">
+                termos de uso
+              </Link>{" "}
+              e a{" "}
+              <Link to="/politica-de-privacidade" className="link-underline text-foreground">
+                política de privacidade
+              </Link>
+              .
             </p>
           </Reveal>
         </div>

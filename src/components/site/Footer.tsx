@@ -19,13 +19,20 @@ const columns = [
       { label: "Carrinho", to: "/carrinho" },
     ],
   },
+  {
+    title: "Legal",
+    links: [
+      { label: "Política de Privacidade", to: "/politica-de-privacidade" },
+      { label: "Termos de Uso", to: "/termos-de-uso" },
+    ],
+  },
 ];
 
 export function Footer() {
   return (
     <footer className="band-dark border-t border-border">
       <div className="container-editorial py-20 lg:py-28">
-        <div className="grid gap-14 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div className="grid gap-14 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
           <div>
             <Logo orientation="vertical" className="items-start" />
             <p className="mt-8 max-w-xs text-sm leading-relaxed text-muted-foreground">

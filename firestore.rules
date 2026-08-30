@@ -1,0 +1,64 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.role == "admin";
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Public catalog. Only admins (or the Admin SDK, which bypasses rules) can write.
+    match /products/{slug} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /categories/{slug} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /posts/{slug} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Lead capture: anyone can submit, only admin can read/manage — this is
+    // one-way collection of marketing data, not something a client ever lists back.
+    match /leads/{leadId} {
+      allow create: if request.resource.data.email is string
+        && request.resource.data.email.size() > 3
+        && request.resource.data.email.size() < 200;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // User-editable profile fields only — role is a custom claim, never stored here,
+    // so a client write can never grant itself admin.
+    match /profiles/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if isOwner(uid) || isAdmin();
+    }
+
+    // Orders are created/updated exclusively server-side (checkout server fn + payment
+    // webhook), both running on the Admin SDK, which bypasses these rules entirely.
+    // Clients only ever read their own.
+    match /orders/{orderId} {
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+      allow write: if false;
+    }
+
+    // Download grants: same pattern — issued server-side after a paid order, owner can
+    // read remaining count/expiry to render "Meus produtos" / "Downloads".
+    match /downloads/{grantId} {
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+      allow write: if false;
+    }
+  }
+}

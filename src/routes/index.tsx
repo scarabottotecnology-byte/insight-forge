@@ -287,16 +287,22 @@ function Home() {
               <Reveal key={a.slug} delay={i * 70}>
                 <article className="flex h-full flex-col bg-card p-8 lg:p-10">
                   <p className="label-micro text-accent-foreground">{a.kicker}</p>
-                  <h3 className="mt-6 text-2xl leading-tight">{a.title}</h3>
+                  <Link
+                    to="/insights/$slug"
+                    params={{ slug: a.slug }}
+                    className="link-underline mt-6 text-2xl leading-tight"
+                  >
+                    {a.title}
+                  </Link>
                   <p className="mt-4 flex-1 text-sm leading-relaxed text-muted-foreground">
                     {a.excerpt}
                   </p>
                   <Link
-                    to="/produtos/$slug"
-                    params={{ slug: a.related }}
+                    to="/insights/$slug"
+                    params={{ slug: a.slug }}
                     className="label-micro link-underline mt-8 self-start"
                   >
-                    Ferramenta relacionada
+                    Ler artigo
                   </Link>
                 </article>
               </Reveal>

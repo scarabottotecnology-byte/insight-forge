@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import { brl, getProduct, products } from "@/lib/catalog";
+import { getRequestOrigin } from "@/lib/origin.functions";
 
 export const Route = createFileRoute("/produtos/$slug")({
   loader: async ({ params }) => {

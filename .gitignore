@@ -20,6 +20,19 @@ dist-ssr
 .wrangler/
 .dev.vars
 
+# Vercel
+.vercel/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Firebase
+.firebase/
+firebase-debug.log
+*-service-account*.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

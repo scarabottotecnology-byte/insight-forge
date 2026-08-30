@@ -12,4 +12,7 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Hard-pin Vercel as the deploy target instead of relying on Nitro's
+  // cloudflare-module fallback (which local builds hit with no platform env vars set).
+  nitro: { preset: "vercel" },
 });

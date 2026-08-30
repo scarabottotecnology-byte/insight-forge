@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { LeadCapture } from "@/components/site/LeadCapture";
 import { Reveal } from "@/components/site/Reveal";
 import { getProduct, journal } from "@/lib/catalog";
 
-export const Route = createFileRoute("/insights")({
+export const Route = createFileRoute("/insights/")({
   head: () => ({
     meta: [
       { title: "Insights — análises de gestão e finanças | Vértice" },
@@ -37,6 +38,14 @@ function Insights() {
         </div>
       </section>
 
+      <section className="band-light border-b border-border">
+        <div className="container-editorial py-20 lg:py-24">
+          <Reveal>
+            <LeadCapture magnetSlug="checklist-abertura-de-empresa" source="insights_page" />
+          </Reveal>
+        </div>
+      </section>
+
       <section className="band-light">
         <div className="container-editorial py-20 lg:py-28">
           <div className="divide-y divide-border border-y border-border">
@@ -50,7 +59,13 @@ function Insights() {
                       <p className="mt-3 text-xs text-muted-foreground">{a.readTime} de leitura</p>
                     </div>
                     <div>
-                      <h2 className="text-3xl leading-tight">{a.title}</h2>
+                      <Link
+                        to="/insights/$slug"
+                        params={{ slug: a.slug }}
+                        className="link-underline text-3xl leading-tight"
+                      >
+                        {a.title}
+                      </Link>
                       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
                         {a.excerpt}
                       </p>

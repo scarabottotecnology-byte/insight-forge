@@ -13,6 +13,8 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { CookieConsent } from "@/components/site/CookieConsent";
+import { AuthProvider } from "@/lib/auth";
 import { CartProvider } from "@/lib/cart";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -131,15 +133,18 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <CartProvider>
-        <Header />
-        <main id="conteudo">
-          {/* Required: nested routes render here. */}
-          <Outlet />
-        </main>
-        <Footer />
-        <Toaster />
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <Header />
+          <main id="conteudo">
+            {/* Required: nested routes render here. */}
+            <Outlet />
+          </main>
+          <Footer />
+          <Toaster />
+          <CookieConsent />
+        </CartProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

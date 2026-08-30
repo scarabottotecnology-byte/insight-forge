@@ -1,7 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Download, FileText, Heart, LifeBuoy, Receipt, User } from "lucide-react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/lib/auth";
 import { brl, products } from "@/lib/catalog";
 
 export const Route = createFileRoute("/conta")({
@@ -34,15 +36,39 @@ const sections = [
 ];
 
 function Account() {
+  const { user, loading, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate({ to: "/entrar" });
+    }
+  }, [loading, user, navigate]);
+
+  if (loading || !user) {
+    return (
+      <section className="band-dark min-h-screen">
+        <div className="container-editorial flex min-h-screen items-center justify-center py-40">
+          <p className="label-micro text-muted-foreground">Carregando…</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <>
       <section className="band-dark border-b border-border">
         <div className="container-editorial pt-40 pb-14 lg:pt-48 lg:pb-20">
           <p className="label-micro text-primary">Área do cliente</p>
-          <h1 className="display-hero mt-8">Minha conta</h1>
+          <div className="mt-8 flex flex-wrap items-end justify-between gap-6">
+            <h1 className="display-hero">Minha conta</h1>
+            <Button variant="hairline" className="text-paper-warm" onClick={() => signOut()}>
+              Sair
+            </Button>
+          </div>
           <p className="mt-8 max-w-md text-sm text-muted-foreground">
-            Esta é a estrutura da área do cliente. A autenticação e os downloads assinados são
-            ativados quando o backend for conectado.
+            Bem-vindo(a), {user.displayName || user.email}. Produtos, pedidos e downloads reais
+            aparecem aqui conforme as próximas etapas do backend forem ligadas.
           </p>
         </div>
       </section>
@@ -109,9 +135,16 @@ function Account() {
             </TabsContent>
 
             <TabsContent value="dados" className="mt-12">
-              <p className="text-sm text-muted-foreground">
-                Dados pessoais, e-mail de acesso e preferências de comunicação.
-              </p>
+              <dl className="max-w-sm space-y-4 border-y border-border py-6 text-sm">
+                <div className="flex justify-between gap-6">
+                  <dt className="text-muted-foreground">Nome</dt>
+                  <dd>{user.displayName || "—"}</dd>
+                </div>
+                <div className="flex justify-between gap-6">
+                  <dt className="text-muted-foreground">E-mail</dt>
+                  <dd>{user.email}</dd>
+                </div>
+              </dl>
             </TabsContent>
 
             <TabsContent value="suporte" className="mt-12">
