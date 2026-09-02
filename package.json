@@ -9,7 +9,10 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "seed:catalog": "bun scripts/seed-catalog.mjs",
+    "seed:posts": "bun scripts/seed-posts.mjs",
+    "set-admin": "bun scripts/set-admin-role.mjs"
   },
   "overrides": {
     "rolldown": "1.2.1"

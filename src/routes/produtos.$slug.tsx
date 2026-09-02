@@ -12,13 +12,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
 import { brl, getProduct, products } from "@/lib/catalog";
-import { getRequestOrigin } from "@/lib/origin.functions";
+import { getOrigin } from "@/lib/origin.functions";
 
 export const Route = createFileRoute("/produtos/$slug")({
   loader: async ({ params }) => {
     const product = getProduct(params.slug);
     if (!product) throw notFound();
-    return { product, origin: await getRequestOrigin() };
+    return { product, origin: await getOrigin() };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData) {

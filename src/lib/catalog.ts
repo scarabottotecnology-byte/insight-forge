@@ -404,31 +404,4 @@ export const getProduct = (slug: string) => products.find((p) => p.slug === slug
 export const brl = (v: number) =>
   v === 0 ? "Gratuito" : v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-export const journal = [
-  {
-    slug: "orcamento-empresarial",
-    kicker: "Finanças",
-    title: "Como construir um orçamento empresarial que sobrevive ao ano",
-    excerpt:
-      "Um orçamento não é uma previsão: é um contrato interno. O que muda quando cada linha tem um responsável.",
-    related: "planilha-orcamento-empresarial",
-    readTime: "8 min",
-  },
-  {
-    slug: "leitura-de-margem",
-    kicker: "Controladoria",
-    title: "Margem de contribuição: o indicador que corrige decisões de preço",
-    excerpt:
-      "Faturar mais e ganhar menos é comum. A margem de contribuição explica onde o resultado se perde.",
-    related: "planilha-dre-gerencial",
-    readTime: "6 min",
-  },
-  {
-    slug: "caixa-versus-resultado",
-    kicker: "Gestão",
-    title: "Caixa e resultado não são a mesma coisa — e a diferença custa caro",
-    excerpt: "Empresas lucrativas quebram por liquidez. Como acompanhar as duas dimensões em paralelo.",
-    related: "planilha-fluxo-de-caixa-empresarial",
-    readTime: "7 min",
-  },
-];
+// Posts live in Firestore now — see scripts/seed-posts.mjs and src/lib/firestore-schema.ts.

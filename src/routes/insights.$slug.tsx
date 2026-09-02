@@ -4,14 +4,14 @@ import { Reveal } from "@/components/site/Reveal";
 import { db } from "@/lib/firebase";
 import type { Post } from "@/lib/firestore-schema";
 import { getProduct } from "@/lib/catalog";
-import { getRequestOrigin } from "@/lib/origin.functions";
+import { getOrigin } from "@/lib/origin.functions";
 
 export const Route = createFileRoute("/insights/$slug")({
   loader: async ({ params }) => {
     const snap = await getDoc(doc(db, "posts", params.slug));
     if (!snap.exists()) throw notFound();
     const post = snap.data() as Post;
-    return { post, origin: await getRequestOrigin() };
+    return { post, origin: await getOrigin() };
   },
   head: ({ loaderData, params }) => {
     if (!loaderData) {

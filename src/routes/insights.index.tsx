@@ -1,9 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { LeadCapture } from "@/components/site/LeadCapture";
 import { Reveal } from "@/components/site/Reveal";
-import { getProduct, journal } from "@/lib/catalog";
+import { getProduct } from "@/lib/catalog";
+import { db } from "@/lib/firebase";
+import type { Post } from "@/lib/firestore-schema";
 
 export const Route = createFileRoute("/insights/")({
+  loader: async () => {
+    const snap = await getDocs(query(collection(db, "posts"), orderBy("createdAt", "desc")));
+    const posts = snap.docs.map((d) => d.data() as Post);
+    return { posts };
+  },
   head: () => ({
     meta: [
       { title: "Insights — análises de gestão e finanças | Vértice" },
@@ -26,6 +34,8 @@ export const Route = createFileRoute("/insights/")({
 });
 
 function Insights() {
+  const { posts } = Route.useLoaderData();
+
   return (
     <>
       <section className="band-dark border-b border-border">
@@ -49,8 +59,8 @@ function Insights() {
       <section className="band-light">
         <div className="container-editorial py-20 lg:py-28">
           <div className="divide-y divide-border border-y border-border">
-            {journal.map((a, i) => {
-              const product = getProduct(a.related);
+            {posts.map((a, i) => {
+              const product = a.related ? getProduct(a.related) : undefined;
               return (
                 <Reveal key={a.slug} delay={i * 70}>
                   <article className="grid gap-8 py-12 lg:grid-cols-[160px_1fr_240px] lg:py-16">

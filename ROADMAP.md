@@ -1,7 +1,13 @@
 # Vértice Business Tools — Roadmap & Backlog
 
+Legenda de status: ✅ concluído · 🔶 parcial/infra pronta · ⬜ não iniciado
 Legenda de prioridade: **P0** crítico · **P1** alto · **P2** médio · **P3** desejável
 Estimativa em pontos (1 = ~meio dia).
+
+> **Nota de arquitetura (2026-08-23):** o backend saiu do plano original (Lovable Cloud /
+> Postgres/RLS) e migrou para **Firebase** (Auth, Firestore, Storage). Os itens de Fase 1
+> abaixo foram reescritos para refletir isso — regras em `firestore.rules`, tipos em
+> `src/lib/firestore-schema.ts`, wiring em `src/lib/firebase.ts` / `firebase-admin.ts`.
 
 ---
 
@@ -23,92 +29,100 @@ Estimativa em pontos (1 = ~meio dia).
 
 ## Fase 1 — Backend e Contas (P0)
 
-| # | Issue | Prioridade | Est. |
-|---|---|---|---|
-| V-101 | Ativar Lovable Cloud (banco, storage, auth) | P0 | 1 |
-| V-102 | Modelagem: `products`, `orders`, `order_items`, `downloads`, `profiles` + RLS e grants | P0 | 3 |
-| V-103 | Migrar catálogo estático para o banco (seed via migração) | P0 | 2 |
-| V-104 | Autenticação e-mail/senha + recuperação de senha | P0 | 3 |
-| V-105 | Google Sign-In | P1 | 1 |
-| V-106 | Tabela `user_roles` + função `has_role` (admin/cliente) | P0 | 2 |
-| V-107 | Proteger `/conta` com gate de rota autenticada | P0 | 1 |
+| # | Issue | Status | Prioridade | Est. | Nota |
+|---|---|---|---|---|---|
+| V-101 | Ativar Firebase (Auth, Firestore, Storage) | ✅ | P0 | 1 | `firebase.ts`, `firebase-admin.ts`, `firebase.json` |
+| V-102 | Modelar `products`, `orders`, `downloads`, `profiles` + regras Firestore | 🔶 | P0 | 3 | Schema e `firestore.rules` prontos; `orders`/`downloads` ainda sem writer server-side real |
+| V-103 | Migrar catálogo estático para Firestore (frontend consumindo do banco) | 🔶 | P0 | 2 | `scripts/seed-catalog.mjs` existe, mas rotas de produto/insights ainda leem `src/lib/catalog.ts` estático |
+| V-104 | Autenticação e-mail/senha + recuperação de senha | ✅ | P0 | 3 | `entrar.tsx`, `cadastro.tsx`, `recuperar-senha.tsx` |
+| V-105 | Google Sign-In | ✅ | P1 | 1 | `signInWithGoogle` em `auth.tsx` |
+| V-106 | Custom claim `role` (admin/cliente) + mecanismo para concedê-la | ✅ | P0 | 2 | `scripts/set-admin-role.mjs` (`bun run set-admin <email>`) chama `setCustomUserClaims` |
+| V-107 | Proteger `/conta` com gate de rota autenticada | ✅ | P0 | 1 | Redireciona para `/entrar` se deslogado |
 
 ## Fase 2 — Pagamento e Entrega Digital (P0)
 
-| # | Issue | Prioridade | Est. |
-|---|---|---|---|
-| V-201 | Integração de pagamento (checkout, Pix/cartão/boleto) | P0 | 5 |
-| V-202 | Webhook de confirmação → criar pedido e liberar acesso | P0 | 3 |
-| V-203 | Storage privado dos arquivos + links assinados temporários | P0 | 3 |
-| V-204 | Limite de downloads por pedido e log de auditoria | P1 | 2 |
-| V-205 | E-mail transacional: confirmação de compra + acesso | P0 | 2 |
-| V-206 | Emissão/registro fiscal e recibo em PDF | P2 | 3 |
-| V-207 | Cupons reais no banco (validade, uso único, % ou fixo) | P1 | 2 |
+| # | Issue | Status | Prioridade | Est. |
+|---|---|---|---|---|
+| V-201 | Integração de pagamento (checkout, Pix/cartão/boleto) | ⬜ | P0 | 5 |
+| V-202 | Webhook de confirmação → criar pedido e liberar acesso | ⬜ | P0 | 3 |
+| V-203 | Storage privado dos arquivos + links assinados temporários | ⬜ | P0 | 3 |
+| V-204 | Limite de downloads por pedido e log de auditoria | ⬜ | P1 | 2 |
+| V-205 | E-mail transacional: confirmação de compra + acesso | ⬜ | P0 | 2 |
+| V-206 | Emissão/registro fiscal e recibo em PDF | ⬜ | P2 | 3 |
+| V-207 | Cupons reais no banco (validade, uso único, % ou fixo) | ⬜ | P1 | 2 |
 
 ## Fase 3 — Experiência do Cliente (P1)
 
-| # | Issue | Prioridade | Est. |
-|---|---|---|---|
-| V-301 | "Meus produtos" e "Downloads" com dados reais | P1 | 2 |
-| V-302 | Histórico de pedidos com status e reenvio de acesso | P1 | 2 |
-| V-303 | Favoritos persistidos por usuário | P2 | 1 |
-| V-304 | Edição de dados, senha e preferências de comunicação | P2 | 2 |
-| V-305 | Central de suporte com ticket por pedido | P2 | 3 |
-| V-306 | Avaliações e depoimentos verificados por compra | P2 | 3 |
-| V-307 | Versionamento de produto e notificação de atualização gratuita | P3 | 3 |
+| # | Issue | Status | Prioridade | Est. | Nota |
+|---|---|---|---|---|---|
+| V-301 | "Meus produtos" e "Downloads" com dados reais | ⬜ | P1 | 2 | `conta.tsx` hoje mostra `products.slice(0,3)` mockado |
+| V-302 | Histórico de pedidos com status e reenvio de acesso | ⬜ | P1 | 2 | |
+| V-303 | Favoritos persistidos por usuário | ⬜ | P2 | 1 | |
+| V-304 | Edição de dados, senha e preferências de comunicação | ⬜ | P2 | 2 | |
+| V-305 | Central de suporte com ticket por pedido | ⬜ | P2 | 3 | |
+| V-306 | Avaliações e depoimentos verificados por compra | ⬜ | P2 | 3 | |
+| V-307 | Versionamento de produto e notificação de atualização gratuita | ⬜ | P3 | 3 | |
 
 ## Fase 4 — Conteúdo e Aquisição (P1)
 
-| # | Issue | Prioridade | Est. |
-|---|---|---|---|
-| V-401 | Insights com posts reais (CMS no banco) e página de artigo | P1 | 3 |
-| V-402 | Captura de leads + isca digital (mini planilha gratuita) | P1 | 2 |
-| V-403 | Newsletter e automação de boas-vindas | P2 | 2 |
-| V-404 | Sitemap.xml e robots dinâmicos | P1 | 1 |
-| V-405 | JSON-LD Article/FAQ nas páginas de conteúdo | P2 | 1 |
-| V-406 | Analytics de eventos (view_item, add_to_cart, purchase) | P1 | 2 |
-| V-407 | Landing pages de campanha por segmento | P3 | 3 |
+| # | Issue | Status | Prioridade | Est. | Nota |
+|---|---|---|---|---|---|
+| V-401 | Insights com posts reais (Firestore) e página de artigo | ✅ | P1 | 3 | Listagem (`insights.index.tsx`) e home (`index.tsx`) agora buscam de `posts` via Firestore; `insights.$slug.tsx` já lia de lá. `journal` estático removido de `catalog.ts` |
+| V-402 | Captura de leads + isca digital | ✅ | P1 | 2 | `LeadCapture.tsx`, `leads.ts`, regra `leads/{leadId}` |
+| V-403 | Newsletter e automação de boas-vindas | ⬜ | P2 | 2 | |
+| V-404 | Sitemap.xml e robots dinâmicos | ✅ | P1 | 1 | `routes/sitemap[.]xml.ts` |
+| V-405 | JSON-LD Article/FAQ nas páginas de conteúdo | ⬜ | P2 | 1 | |
+| V-406 | Analytics de eventos (view_item, add_to_cart, purchase) | ⬜ | P1 | 2 | |
+| V-407 | Landing pages de campanha por segmento | ⬜ | P3 | 3 | |
 
 ## Fase 5 — Admin e Operação (P1)
 
-| # | Issue | Prioridade | Est. |
-|---|---|---|---|
-| V-501 | Painel admin: CRUD de produtos e upload de arquivos | P1 | 5 |
-| V-502 | Gestão de pedidos, reembolsos e revogação de acesso | P1 | 3 |
-| V-503 | Gestão de cupons e campanhas | P2 | 2 |
-| V-504 | Dashboard de vendas (receita, ticket médio, top produtos) | P2 | 3 |
-| V-505 | Exportação CSV de pedidos e clientes | P3 | 1 |
+| # | Issue | Status | Prioridade | Est. |
+|---|---|---|---|---|
+| V-501 | Painel admin: CRUD de produtos e upload de arquivos | ⬜ | P1 | 5 |
+| V-502 | Gestão de pedidos, reembolsos e revogação de acesso | ⬜ | P1 | 3 |
+| V-503 | Gestão de cupons e campanhas | ⬜ | P2 | 2 |
+| V-504 | Dashboard de vendas (receita, ticket médio, top produtos) | ⬜ | P2 | 3 |
+| V-505 | Exportação CSV de pedidos e clientes | ⬜ | P3 | 1 |
 
 ## Fase 6 — Qualidade, Performance e Conformidade (P1)
 
-| # | Issue | Prioridade | Est. |
-|---|---|---|---|
-| V-601 | Testes E2E do fluxo comprar → pagar → baixar | P1 | 3 |
-| V-602 | Acessibilidade AA (foco visível, contraste, teclado, ARIA) | P1 | 3 |
-| V-603 | Performance: imagens responsivas, lazy loading, Core Web Vitals | P1 | 2 |
-| V-604 | Estados de erro/vazio/carregamento em todas as rotas | P1 | 2 |
-| V-605 | LGPD: política de privacidade, termos, consentimento de cookies | P0 | 2 |
-| V-606 | Scan de segurança e revisão de RLS | P0 | 2 |
-| V-607 | Domínio próprio, publicação e monitoramento | P1 | 1 |
+| # | Issue | Status | Prioridade | Est. | Nota |
+|---|---|---|---|---|---|
+| V-601 | Testes E2E do fluxo comprar → pagar → baixar | ⬜ | P1 | 3 | Depende da Fase 2 |
+| V-602 | Acessibilidade AA (foco visível, contraste, teclado, ARIA) | ⬜ | P1 | 3 | |
+| V-603 | Performance: imagens responsivas, lazy loading, Core Web Vitals | ⬜ | P1 | 2 | |
+| V-604 | Estados de erro/vazio/carregamento em todas as rotas | ⬜ | P1 | 2 | |
+| V-605 | LGPD: política de privacidade, termos, consentimento de cookies | ✅ | P0 | 2 | `politica-de-privacidade.tsx`, `termos-de-uso.tsx`, `CookieConsent.tsx` |
+| V-606 | Scan de segurança e revisão de regras Firestore/Storage | 🔶 | P0 | 2 | `firestore.rules` já modelado com boas práticas (claims, owner-only); falta revisão formal + `storage.rules` de arquivos pagos |
+| V-607 | Domínio próprio, publicação e monitoramento | ⬜ | P1 | 1 | |
 
 ## Fase 7 — Expansão (P3)
 
-| # | Issue | Prioridade | Est. |
-|---|---|---|---|
-| V-701 | Assinatura Vértice (acesso a toda a biblioteca) | P3 | 8 |
-| V-702 | Programa de afiliados | P3 | 5 |
-| V-703 | Bundles dinâmicos e precificação por kit | P3 | 3 |
-| V-704 | Versão em inglês (i18n) | P3 | 5 |
-| V-705 | Área de cursos/vídeo-aulas complementares | P3 | 8 |
+| # | Issue | Status | Prioridade | Est. |
+|---|---|---|---|---|
+| V-701 | Assinatura Vértice (acesso a toda a biblioteca) | ⬜ | P3 | 8 |
+| V-702 | Programa de afiliados | ⬜ | P3 | 5 |
+| V-703 | Bundles dinâmicos e precificação por kit | ⬜ | P3 | 3 |
+| V-704 | Versão em inglês (i18n) | ⬜ | P3 | 5 |
+| V-705 | Área de cursos/vídeo-aulas complementares | ⬜ | P3 | 8 |
 
 ---
 
 ## Marcos
 
-1. **MVP comercial** — Fases 1 e 2 (venda e entrega ponta a ponta).
+1. **MVP comercial** — Fases 1 e 2 (venda e entrega ponta a ponta). *Fase 1 está ~70% pronta; Fase 2 não iniciada — é o maior bloco de trabalho restante para vender.*
 2. **Loja completa** — Fases 3, 4 e 5.
 3. **Escala** — Fases 6 e 7.
 
-## Sequência recomendada
+## Sequência recomendada (atualizada — 2026-09-01)
 
-`V-101 → V-102 → V-103 → V-104 → V-107 → V-201 → V-202 → V-203 → V-205 → V-605 → V-606 → V-301 → V-501`
+1. ~~`V-106` — script/função admin para conceder `role: admin` via custom claim.~~ ✅ feito (`scripts/set-admin-role.mjs`).
+2. ~~`V-401` — trocar leitura de `journal` estático por Firestore.~~ ✅ feito (home e `/insights` agora buscam de `posts`).
+3. `V-103` — migrar o catálogo de produtos (`catalog.ts`) para Firestore. Maior e mais arriscado que V-401: `products` é lido por `cart.tsx`, `conta.tsx`, `carrinho.tsx`, `produtos.*`, `ProductCard`, `LeadCapture`, `Footer` e `sitemap.xml` — vale planejar como escopo à parte antes de tocar (carrinho/checkout não podem quebrar).
+4. `V-102` — fechar o modelo de `orders`/`downloads` com escrita server-side real (server function ou Cloud Function; hoje só o schema e as regras existem).
+5. `V-201 → V-202 → V-203 → V-205` — checkout, webhook, storage privado com link assinado, e-mail de confirmação. Este é o bloco crítico do MVP comercial e ainda não foi iniciado.
+6. `V-207` — cupons reais (hoje o carrinho já suporta cupom, mas não valida contra o banco).
+7. `V-606` — revisão de segurança antes de abrir pagamentos de verdade.
+8. `V-301` — "Meus produtos"/"Downloads" com dados reais assim que houver pedidos de verdade.
+9. `V-501` — painel admin (CRUD de produtos, gestão de pedidos) — agora desbloqueado por V-106.

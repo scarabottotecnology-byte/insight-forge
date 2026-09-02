@@ -4,7 +4,7 @@ import { z } from "zod";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal } from "@/components/site/Reveal";
 import { categories, products } from "@/lib/catalog";
-import { getRequestOrigin } from "@/lib/origin.functions";
+import { getOrigin } from "@/lib/origin.functions";
 import { cn } from "@/lib/utils";
 
 const searchSchema = z.object({
@@ -15,7 +15,7 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/produtos/")({
   validateSearch: searchSchema,
-  loader: async () => ({ origin: await getRequestOrigin() }),
+  loader: async () => ({ origin: await getOrigin() }),
   head: ({ loaderData }) => {
     const origin = loaderData?.origin ?? "";
     const title = "Catálogo de planilhas, dashboards e e-books — Vértice";

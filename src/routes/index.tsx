@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { ArrowRight } from "lucide-react";
 import heroImage from "@/assets/hero-editorial.jpg";
 import { Marquee } from "@/components/site/Marquee";
@@ -7,11 +8,20 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal } from "@/components/site/Reveal";
 import { ScrollProgress } from "@/components/site/ScrollProgress";
 import { Button } from "@/components/ui/button";
-import { brl, categories, journal, products } from "@/lib/catalog";
-import { getRequestOrigin } from "@/lib/origin.functions";
+import { brl, categories, products } from "@/lib/catalog";
+import { db } from "@/lib/firebase";
+import type { Post } from "@/lib/firestore-schema";
+import { getOrigin } from "@/lib/origin.functions";
 
 export const Route = createFileRoute("/")({
-  loader: async () => ({ origin: await getRequestOrigin() }),
+  loader: async () => {
+    const [origin, postsSnap] = await Promise.all([
+      getOrigin(),
+      getDocs(query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(3))),
+    ]);
+    const journal = postsSnap.docs.map((d) => d.data() as Post);
+    return { origin, journal };
+  },
   head: ({ loaderData }) => {
     const origin = loaderData?.origin ?? "";
     const title = "Vértice — Ferramentas de negócios, finanças e gestão";
@@ -64,6 +74,7 @@ const trust = [
 ];
 
 function Home() {
+  const { journal } = Route.useLoaderData();
   const bestSellers = products.filter((p) => p.bestSeller || p.tier === "core").slice(0, 3);
   const featured = products.find((p) => p.slug === "dashboard-financeiro-gerencial")!;
   const kits = products.filter((p) => p.type === "Kit");
