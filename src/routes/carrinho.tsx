@@ -1,10 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Reveal } from "@/components/site/Reveal";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth";
 import { useCart } from "@/lib/cart";
 import { brl } from "@/lib/catalog";
+import { createOrder } from "@/lib/orders.functions";
 import { useProductCatalog } from "@/lib/product-catalog";
 
 export const Route = createFileRoute("/carrinho")({
@@ -28,9 +30,12 @@ export const Route = createFileRoute("/carrinho")({
 function CartPage() {
   const { detailed, subtotal, savings, remove, clear, add, has } = useCart();
   const { products } = useProductCatalog();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
   const [done, setDone] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const upsells = products
     .filter((p) => !has(p.slug) && p.category === detailed[0]?.product.category)
@@ -44,6 +49,31 @@ function CartPage() {
       toast.success("Cupom aplicado", { description: "10% de desconto" });
     } else {
       toast.error("Cupom inválido");
+    }
+  };
+
+  const finalizarCompra = async () => {
+    if (!user) {
+      toast.info("Entre na sua conta para finalizar a compra");
+      navigate({ to: "/entrar" });
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const idToken = await user.getIdToken();
+      await createOrder({
+        data: {
+          idToken,
+          items: detailed.map(({ product, qty }) => ({ slug: product.slug, qty })),
+          couponCode: coupon.trim() || undefined,
+        },
+      });
+      clear();
+      setDone(true);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível finalizar a compra.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -198,14 +228,17 @@ function CartPage() {
               variant="ink"
               size="editorial"
               className="mt-8 w-full"
-              disabled={detailed.length === 0}
-              onClick={() => {
-                clear();
-                setDone(true);
-              }}
+              disabled={detailed.length === 0 || submitting}
+              onClick={finalizarCompra}
             >
-              Finalizar compra
+              {submitting ? "Finalizando…" : "Finalizar compra"}
             </Button>
+            {total > 0 && (
+              <p className="mt-4 text-xs text-muted-foreground">
+                Pagamento por Pix, cartão e boleto chega em breve. Por enquanto só é possível
+                finalizar carrinhos com itens gratuitos.
+              </p>
+            )}
             <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
               Entrega digital imediata por link seguro e temporário. Ao continuar você concorda com os{" "}
               <Link to="/termos-de-uso" className="link-underline text-foreground">

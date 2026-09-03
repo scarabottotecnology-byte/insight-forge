@@ -32,7 +32,7 @@ Estimativa em pontos (1 = ~meio dia).
 | # | Issue | Status | Prioridade | Est. | Nota |
 |---|---|---|---|---|---|
 | V-101 | Ativar Firebase (Auth, Firestore, Storage) | ✅ | P0 | 1 | `firebase.ts`, `firebase-admin.ts`, `firebase.json` |
-| V-102 | Modelar `products`, `orders`, `downloads`, `profiles` + regras Firestore | 🔶 | P0 | 3 | Schema e `firestore.rules` prontos; `orders`/`downloads` ainda sem writer server-side real |
+| V-102 | Modelar `products`, `orders`, `downloads`, `profiles` + regras Firestore | 🔶 | P0 | 3 | `orders` agora tem writer server-side real (`src/lib/orders.functions.ts`) para carrinhos gratuitos; `downloads` ainda depende de V-203 (storage) |
 | V-103 | Migrar catálogo estático para Firestore (frontend consumindo do banco) | ✅ | P0 | 2 | `src/lib/products.ts` + `src/lib/product-catalog.tsx`; todas as rotas e componentes leem do Firestore |
 | V-104 | Autenticação e-mail/senha + recuperação de senha | ✅ | P0 | 3 | `entrar.tsx`, `cadastro.tsx`, `recuperar-senha.tsx` |
 | V-105 | Google Sign-In | ✅ | P1 | 1 | `signInWithGoogle` em `auth.tsx` |
@@ -120,7 +120,7 @@ Estimativa em pontos (1 = ~meio dia).
 1. ~~`V-106` — script/função admin para conceder `role: admin` via custom claim.~~ ✅ feito (`scripts/set-admin-role.mjs`).
 2. ~~`V-401` — trocar leitura de `journal` estático por Firestore.~~ ✅ feito (home e `/insights` agora buscam de `posts`).
 3. ~~`V-103` — migrar o catálogo de produtos (`catalog.ts`) para Firestore.~~ ✅ feito — `src/lib/products.ts` (fetch + cache) e `src/lib/product-catalog.tsx` (contexto de catálogo, populado pelo loader do `__root.tsx`) substituem o array estático em `cart.tsx`, `conta.tsx`, `carrinho.tsx`, `produtos.*`, `insights.*`, `LeadCapture`, `Footer` e `sitemap.xml`. Catálogo semeado via `bun run seed:catalog`; fluxo carrinho/bundle/cupom testado ponta a ponta.
-4. `V-102` — fechar o modelo de `orders`/`downloads` com escrita server-side real (server function ou Cloud Function; hoje só o schema e as regras existem).
+4. ~~`V-102` (parte 1) — writer server-side real para `orders`.~~ ✅ feito — `src/lib/orders.functions.ts` (server function autenticada, revalida preço no Firestore, nunca confia no cliente). Carrinho 100% gratuito finaliza de verdade e grava pedido; carrinho com item pago é bloqueado com aviso claro, já que não existe gateway de pagamento ainda. `downloads` fica para quando V-203 (storage) existir — apontar para um arquivo que não existe seria só encenação.
 5. `V-201 → V-202 → V-203 → V-205` — checkout, webhook, storage privado com link assinado, e-mail de confirmação. Este é o bloco crítico do MVP comercial e ainda não foi iniciado.
 6. `V-207` — cupons reais (hoje o carrinho já suporta cupom, mas não valida contra o banco).
 7. `V-606` — revisão de segurança antes de abrir pagamentos de verdade.
