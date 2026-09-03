@@ -4,7 +4,8 @@ import { toast } from "sonner";
 import { Reveal } from "@/components/site/Reveal";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
-import { brl, products } from "@/lib/catalog";
+import { brl } from "@/lib/catalog";
+import { useProductCatalog } from "@/lib/product-catalog";
 
 export const Route = createFileRoute("/carrinho")({
   head: () => ({
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/carrinho")({
 
 function CartPage() {
   const { detailed, subtotal, savings, remove, clear, add, has } = useCart();
+  const { products } = useProductCatalog();
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
   const [done, setDone] = useState(false);

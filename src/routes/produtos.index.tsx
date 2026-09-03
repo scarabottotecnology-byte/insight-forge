@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { z } from "zod";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal } from "@/components/site/Reveal";
-import { categories, products } from "@/lib/catalog";
 import { getOrigin } from "@/lib/origin.functions";
+import { fetchCategories, fetchProducts } from "@/lib/products";
 import { cn } from "@/lib/utils";
 
 const searchSchema = z.object({
@@ -15,9 +15,17 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/produtos/")({
   validateSearch: searchSchema,
-  loader: async () => ({ origin: await getOrigin() }),
+  loader: async () => {
+    const [origin, products, categories] = await Promise.all([
+      getOrigin(),
+      fetchProducts(),
+      fetchCategories(),
+    ]);
+    return { origin, products, categories };
+  },
   head: ({ loaderData }) => {
     const origin = loaderData?.origin ?? "";
+    const products = loaderData?.products ?? [];
     const title = "Catálogo de planilhas, dashboards e e-books — Vértice";
     const description =
       "Planilhas, dashboards, kits, modelos e e-books de finanças, gestão e estratégia. Filtre por categoria, tipo e nível.";
@@ -73,6 +81,7 @@ const types = ["Planilha", "Dashboard", "E-book", "Template", "Documento", "Chec
 
 function Catalog() {
   const { categoria, tipo, destaque } = Route.useSearch();
+  const { products, categories } = Route.useLoaderData();
 
   const list = useMemo(() => {
     let out = [...products];
@@ -81,7 +90,7 @@ function Catalog() {
     if (destaque === "vendidos") out = out.filter((p) => p.bestSeller);
     if (destaque === "gratuitos") out = out.filter((p) => p.price === 0);
     return out;
-  }, [categoria, tipo, destaque]);
+  }, [products, categoria, tipo, destaque]);
 
   return (
     <>

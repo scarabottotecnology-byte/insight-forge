@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { getProduct } from "@/lib/catalog";
 import { captureLead } from "@/lib/leads";
+import { useProductCatalog } from "@/lib/product-catalog";
 
 export function LeadCapture({ magnetSlug, source }: { magnetSlug: string; source: string }) {
+  const { getProduct } = useProductCatalog();
   const magnet = getProduct(magnetSlug);
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);

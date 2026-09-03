@@ -16,6 +16,8 @@ import { Footer } from "@/components/site/Footer";
 import { CookieConsent } from "@/components/site/CookieConsent";
 import { AuthProvider } from "@/lib/auth";
 import { CartProvider } from "@/lib/cart";
+import { ProductCatalogProvider } from "@/lib/product-catalog";
+import { fetchCategories, fetchProducts } from "@/lib/products";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -71,6 +73,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: async () => {
+    const [products, categories] = await Promise.all([fetchProducts(), fetchCategories()]);
+    return { products, categories };
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -130,20 +136,23 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const { products, categories } = Route.useLoaderData();
 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <CartProvider>
-          <Header />
-          <main id="conteudo">
-            {/* Required: nested routes render here. */}
-            <Outlet />
-          </main>
-          <Footer />
-          <Toaster />
-          <CookieConsent />
-        </CartProvider>
+        <ProductCatalogProvider products={products} categories={categories}>
+          <CartProvider>
+            <Header />
+            <main id="conteudo">
+              {/* Required: nested routes render here. */}
+              <Outlet />
+            </main>
+            <Footer />
+            <Toaster />
+            <CookieConsent />
+          </CartProvider>
+        </ProductCatalogProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

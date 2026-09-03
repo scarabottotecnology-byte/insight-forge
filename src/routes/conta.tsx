@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/lib/auth";
-import { brl, products } from "@/lib/catalog";
+import { brl } from "@/lib/catalog";
+import { useProductCatalog } from "@/lib/product-catalog";
 
 export const Route = createFileRoute("/conta")({
   head: () => ({
@@ -24,8 +25,6 @@ export const Route = createFileRoute("/conta")({
   component: Account,
 });
 
-const owned = products.slice(0, 3);
-
 const sections = [
   { value: "produtos", label: "Meus produtos", icon: FileText },
   { value: "downloads", label: "Downloads", icon: Download },
@@ -38,6 +37,8 @@ const sections = [
 function Account() {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const { products } = useProductCatalog();
+  const owned = products.slice(0, 3);
 
   useEffect(() => {
     if (!loading && !user) {

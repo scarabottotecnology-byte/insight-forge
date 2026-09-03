@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { products, type Product } from "@/lib/catalog";
+import type { Product } from "@/lib/catalog";
+import { useProductCatalog } from "@/lib/product-catalog";
 
 const STORAGE_KEY = "vertice.cart.v1";
 
@@ -20,6 +21,7 @@ type CartContextValue = {
 const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { products } = useProductCatalog();
   const [items, setItems] = useState<CartItem[]>([]);
 
   useEffect(() => {
@@ -74,7 +76,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       clear,
       has: (slug: string) => items.some((i) => i.slug === slug),
     };
-  }, [items, add, remove, clear]);
+  }, [items, products, add, remove, clear]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

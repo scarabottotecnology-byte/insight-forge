@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { products } from "@/lib/catalog";
+import { fetchProducts } from "@/lib/products";
 
 interface SitemapEntry {
   path: string;
@@ -13,6 +13,7 @@ export const Route = createFileRoute("/sitemap.xml")({
     handlers: {
       GET: async ({ request }) => {
         const origin = new URL(request.url).origin;
+        const products = await fetchProducts();
 
         const entries: SitemapEntry[] = [
           { path: "/", changefreq: "weekly", priority: "1.0" },

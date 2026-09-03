@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Logo } from "@/components/brand/Logo";
-import { categories } from "@/lib/catalog";
+import { useProductCatalog } from "@/lib/product-catalog";
 
 const columns = [
   {
@@ -29,6 +29,8 @@ const columns = [
 ];
 
 export function Footer() {
+  const { categories } = useProductCatalog();
+
   return (
     <footer className="band-dark border-t border-border">
       <div className="container-editorial py-20 lg:py-28">

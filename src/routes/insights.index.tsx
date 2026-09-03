@@ -2,8 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { LeadCapture } from "@/components/site/LeadCapture";
 import { Reveal } from "@/components/site/Reveal";
-import { getProduct } from "@/lib/catalog";
 import { db } from "@/lib/firebase";
+import { useProductCatalog } from "@/lib/product-catalog";
 import type { Post } from "@/lib/firestore-schema";
 
 export const Route = createFileRoute("/insights/")({
@@ -35,6 +35,7 @@ export const Route = createFileRoute("/insights/")({
 
 function Insights() {
   const { posts } = Route.useLoaderData();
+  const { getProduct } = useProductCatalog();
 
   return (
     <>

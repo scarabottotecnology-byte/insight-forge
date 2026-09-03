@@ -3,7 +3,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { Reveal } from "@/components/site/Reveal";
 import { db } from "@/lib/firebase";
 import type { Post } from "@/lib/firestore-schema";
-import { getProduct } from "@/lib/catalog";
+import { useProductCatalog } from "@/lib/product-catalog";
 import { getOrigin } from "@/lib/origin.functions";
 
 export const Route = createFileRoute("/insights/$slug")({
@@ -66,6 +66,7 @@ export const Route = createFileRoute("/insights/$slug")({
 
 function ArticlePage() {
   const { post } = Route.useLoaderData();
+  const { getProduct } = useProductCatalog();
   const related = post.related ? getProduct(post.related) : undefined;
 
   return (

@@ -11,12 +11,14 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart";
-import { brl, getProduct, products } from "@/lib/catalog";
+import { brl } from "@/lib/catalog";
 import { getOrigin } from "@/lib/origin.functions";
+import { useProductCatalog } from "@/lib/product-catalog";
+import { fetchProductBySlug } from "@/lib/products";
 
 export const Route = createFileRoute("/produtos/$slug")({
   loader: async ({ params }) => {
-    const product = getProduct(params.slug);
+    const product = await fetchProductBySlug(params.slug);
     if (!product) throw notFound();
     return { product, origin: await getOrigin() };
   },
@@ -101,6 +103,7 @@ export const Route = createFileRoute("/produtos/$slug")({
 function ProductPage() {
   const { product } = Route.useLoaderData();
   const { add, has } = useCart();
+  const { products, getProduct } = useProductCatalog();
 
   const bundleItems = (product.bundleOf ?? []).map((s) => getProduct(s)).filter(Boolean);
   const individualTotal = bundleItems.reduce((acc, p) => acc + (p?.price ?? 0), 0);

@@ -8,8 +8,9 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal } from "@/components/site/Reveal";
 import { ScrollProgress } from "@/components/site/ScrollProgress";
 import { Button } from "@/components/ui/button";
-import { brl, categories, products } from "@/lib/catalog";
+import { brl } from "@/lib/catalog";
 import { db } from "@/lib/firebase";
+import { useProductCatalog } from "@/lib/product-catalog";
 import type { Post } from "@/lib/firestore-schema";
 import { getOrigin } from "@/lib/origin.functions";
 
@@ -75,8 +76,9 @@ const trust = [
 
 function Home() {
   const { journal } = Route.useLoaderData();
+  const { products, categories } = useProductCatalog();
   const bestSellers = products.filter((p) => p.bestSeller || p.tier === "core").slice(0, 3);
-  const featured = products.find((p) => p.slug === "dashboard-financeiro-gerencial")!;
+  const featured = (products.find((p) => p.slug === "dashboard-financeiro-gerencial") ?? products[0])!;
   const kits = products.filter((p) => p.type === "Kit");
   const free = products.filter((p) => p.price === 0);
 
