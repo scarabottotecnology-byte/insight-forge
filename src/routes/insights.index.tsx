@@ -52,7 +52,7 @@ function Insights() {
       <section className="band-light border-b border-border">
         <div className="container-editorial py-20 lg:py-24">
           <Reveal>
-            <LeadCapture magnetSlug="checklist-abertura-de-empresa" source="insights_page" />
+            <LeadCapture magnetSlug="planilha-gratuita-fluxo-de-caixa" source="insights_page" />
           </Reveal>
         </div>
       </section>
