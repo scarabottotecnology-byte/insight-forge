@@ -378,6 +378,29 @@ function Home() {
         </div>
       </section>
 
+      {/* CROSS-SELL: KEYSTONE CONSULTORIA */}
+      <section className="band-light border-t border-border">
+        <div className="container-editorial py-16 lg:py-20">
+          <Reveal className="flex flex-wrap items-center justify-between gap-8 border border-primary/30 bg-secondary p-10 lg:p-14">
+            <div className="max-w-lg">
+              <p className="label-micro text-accent-foreground">Consultoria</p>
+              <h2 className="mt-4 text-2xl leading-tight lg:text-3xl">
+                Conheça nossas soluções de consultoria
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                Diagnóstico, indicadores e acompanhamento sob medida pela Keystone — para quem
+                precisa de mais do que uma ferramenta pronta.
+              </p>
+            </div>
+            <Button asChild variant="champagne" size="editorial">
+              <a href="https://keystone-phi.vercel.app" target="_blank" rel="noopener noreferrer">
+                Conhecer a Keystone
+              </a>
+            </Button>
+          </Reveal>
+        </div>
+      </section>
+
       {/* CTA FINAL */}
       <section className="band-light border-t border-border">
         <div className="container-editorial py-28 text-center lg:py-36">
