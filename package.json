@@ -12,7 +12,6 @@
     "format": "prettier --write .",
     "seed:catalog": "bun scripts/seed-catalog.mjs",
     "seed:posts": "bun scripts/seed-posts.mjs",
-    "seed:free-cashflow": "bun scripts/seed-free-cashflow.mjs",
     "set-admin": "bun scripts/set-admin-role.mjs"
   },
   "overrides": {
