@@ -36,6 +36,8 @@ export type OrderItem = {
   quantity: number;
 };
 
+export type PaymentMethod = "PIX" | "BOLETO" | "CREDIT_CARD";
+
 export type Order = {
   id: string;
   userId: string;
@@ -45,6 +47,14 @@ export type Order = {
   status: OrderStatus;
   paymentProvider?: string;
   paymentRef?: string;
+  paymentMethod?: PaymentMethod;
+  // Denormalized display data for the checkout result screen — refreshed by the
+  // Asaas webhook (src/routes/api.webhooks.asaas.ts) as the payment status changes.
+  invoiceUrl?: string;
+  bankSlipUrl?: string;
+  pixPayload?: string;
+  pixQrCodeImage?: string;
+  pixExpiresAt?: string;
   createdAt: number;
   updatedAt: number;
 };

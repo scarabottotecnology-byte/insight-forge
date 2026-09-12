@@ -58,9 +58,9 @@ Estimativa em pontos (1 = ~meio dia).
 
 | # | Issue | Status | Prioridade | Est. | Nota |
 |---|---|---|---|---|---|
-| V-201 | Integração de pagamento (checkout, Pix/cartão/boleto) | ⬜ | P0 | 5 | Gateway decidido: **Asaas** (custo baixo, PIX sem mensalidade). Avaliados também Mercado Pago, Efí e Pagar.me. Implementação ainda não iniciada. |
-| V-202 | Webhook de confirmação → criar pedido e liberar acesso | ⬜ | P0 | 3 | |
-| V-203 | Storage privado dos arquivos + links assinados temporários | ⬜ | P0 | 3 | |
+| V-201 | Integração de pagamento (checkout, Pix/cartão/boleto) | 🔶 | P0 | 5 | **Implementado com Asaas**: `src/lib/asaas.server.ts` (cliente server-only) + `createOrder` em `src/lib/orders.functions.ts` cria cliente/cobrança real (Pix, boleto ou cartão) e a UI de checkout (`carrinho.tsx`) coleta os dados e mostra QR Pix / link do boleto / resultado do cartão. Falta testar em produção com uma cobrança real e configurar `ASAAS_API_KEY`/`ASAAS_ENV`/`ASAAS_WEBHOOK_TOKEN` na Vercel. |
+| V-202 | Webhook de confirmação → criar pedido e liberar acesso | 🔶 | P0 | 3 | **Implementado**: `src/routes/api.webhooks.asaas.ts` recebe os eventos de pagamento e atualiza o status do pedido no Firestore. Falta cadastrar a URL no painel Asaas com o token de `ASAAS_WEBHOOK_TOKEN` e testar um evento real — e ligar a liberação de acesso de fato (depende de V-203). |
+| V-203 | Storage privado dos arquivos + links assinados temporários | ⬜ | P0 | 3 | Pedido pago (grátis ou via Asaas) ainda não gera nenhum `downloads/{grantId}` — a tela "Ir para downloads" não tem o que mostrar até isso existir. |
 | V-204 | Limite de downloads por pedido e log de auditoria | ⬜ | P1 | 2 | |
 | V-205 | E-mail transacional: confirmação de compra + acesso | ⬜ | P0 | 2 | |
 | V-206 | Emissão/registro fiscal e recibo em PDF | ⬜ | P2 | 3 | |
@@ -137,7 +137,7 @@ Estimativa em pontos (1 = ~meio dia).
 3. ~~`V-103` — migrar o catálogo de produtos (`catalog.ts`) para Firestore.~~ ✅ feito — `src/lib/products.ts` (fetch + cache) e `src/lib/product-catalog.tsx` (contexto de catálogo, populado pelo loader do `__root.tsx`) substituem o array estático em `cart.tsx`, `conta.tsx`, `carrinho.tsx`, `produtos.*`, `insights.*`, `LeadCapture`, `Footer` e `sitemap.xml`. Catálogo semeado via `bun run seed:catalog`; fluxo carrinho/bundle/cupom testado ponta a ponta.
 4. ~~`V-102` (parte 1) — writer server-side real para `orders`.~~ ✅ feito — `src/lib/orders.functions.ts` (server function autenticada, revalida preço no Firestore, nunca confia no cliente). Carrinho 100% gratuito finaliza de verdade e grava pedido; carrinho com item pago é bloqueado com aviso claro, já que não existe gateway de pagamento ainda. `downloads` fica para quando V-203 (storage) existir — apontar para um arquivo que não existe seria só encenação.
 5. `PC-01` — conteúdo real do Checklist de Abertura de Empresa (o produto gratuito). Prioridade máxima em conteúdo: é a isca que já está ativa no site sem nada pra entregar.
-6. `V-201 → V-202 → V-203 → V-205` — checkout, webhook, storage privado com link assinado, e-mail de confirmação. Bloco crítico do MVP comercial em engenharia, ainda não iniciado. Pode correr em paralelo com `PC-02`.
+6. ~~`V-201` e `V-202` — checkout Asaas (Pix/boleto/cartão) + webhook de confirmação.~~ 🔶 implementado — falta cadastrar o webhook no painel Asaas, configurar as env vars na Vercel e testar com uma cobrança real. `V-203` (storage) e `V-205` (e-mail) continuam não iniciados — sem eles o pedido é confirmado mas não entrega nada.
 7. `PC-02` — criar os arquivos reais dos 12 produtos pagos do catálogo, em ondas por categoria. Sem isso, `V-203` não tem nada de real para servir.
 8. `V-207` — cupons reais (hoje o carrinho já suporta cupom, mas não valida contra o banco).
 9. `V-606` — revisão de segurança antes de abrir pagamentos de verdade.
