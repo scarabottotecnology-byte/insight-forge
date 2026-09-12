@@ -41,15 +41,15 @@ Estimativa em pontos (1 = ~meio dia).
 
 ## Fase 2 — Pagamento e Entrega Digital (P0)
 
-| # | Issue | Status | Prioridade | Est. |
-|---|---|---|---|---|
-| V-201 | Integração de pagamento (checkout, Pix/cartão/boleto) | ⬜ | P0 | 5 |
-| V-202 | Webhook de confirmação → criar pedido e liberar acesso | ⬜ | P0 | 3 |
-| V-203 | Storage privado dos arquivos + links assinados temporários | ⬜ | P0 | 3 |
-| V-204 | Limite de downloads por pedido e log de auditoria | ⬜ | P1 | 2 |
-| V-205 | E-mail transacional: confirmação de compra + acesso | ⬜ | P0 | 2 |
-| V-206 | Emissão/registro fiscal e recibo em PDF | ⬜ | P2 | 3 |
-| V-207 | Cupons reais no banco (validade, uso único, % ou fixo) | ⬜ | P1 | 2 |
+| # | Issue | Status | Prioridade | Est. | Nota |
+|---|---|---|---|---|---|
+| V-201 | Integração de pagamento (checkout, Pix/cartão/boleto) | ⬜ | P0 | 5 | Gateway decidido: **Asaas** (custo baixo, PIX sem mensalidade). Avaliados também Mercado Pago, Efí e Pagar.me. Implementação ainda não iniciada. |
+| V-202 | Webhook de confirmação → criar pedido e liberar acesso | ⬜ | P0 | 3 | |
+| V-203 | Storage privado dos arquivos + links assinados temporários | ⬜ | P0 | 3 | |
+| V-204 | Limite de downloads por pedido e log de auditoria | ⬜ | P1 | 2 | |
+| V-205 | E-mail transacional: confirmação de compra + acesso | ⬜ | P0 | 2 | |
+| V-206 | Emissão/registro fiscal e recibo em PDF | ⬜ | P2 | 3 | |
+| V-207 | Cupons reais no banco (validade, uso único, % ou fixo) | ⬜ | P1 | 2 | |
 
 ## Fase 3 — Experiência do Cliente (P1)
 
