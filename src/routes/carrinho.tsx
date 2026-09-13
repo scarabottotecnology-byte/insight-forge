@@ -1,12 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Reveal } from "@/components/site/Reveal";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { useCart } from "@/lib/cart";
 import { brl } from "@/lib/catalog";
-import { createOrder } from "@/lib/orders.functions";
+import { createOrder, getOrderStatus } from "@/lib/orders.functions";
 import { useProductCatalog } from "@/lib/product-catalog";
 
 export const Route = createFileRoute("/carrinho")({
@@ -15,7 +15,8 @@ export const Route = createFileRoute("/carrinho")({
       { title: "Carrinho e checkout — Vértice" },
       {
         name: "description",
-        content: "Revise seus itens, aplique cupom e finalize a compra com acesso imediato aos arquivos.",
+        content:
+          "Revise seus itens, aplique cupom e finalize a compra com acesso imediato aos arquivos.",
       },
       { property: "og:title", content: "Carrinho e checkout — Vértice" },
       { property: "og:description", content: "Checkout direto com entrega digital imediata." },
@@ -27,6 +28,27 @@ export const Route = createFileRoute("/carrinho")({
   component: CartPage,
 });
 
+const inputClass =
+  "h-11 w-full border border-input bg-transparent px-4 text-sm placeholder:text-muted-foreground focus:border-accent-foreground focus:outline-none";
+
+type PaymentMethod = "PIX" | "BOLETO" | "CREDIT_CARD";
+
+type PendingPayment = {
+  orderId: string;
+  status: string;
+  paymentMethod?: PaymentMethod;
+  invoiceUrl?: string;
+  bankSlipUrl?: string;
+  pixPayload?: string;
+  pixQrCodeImage?: string;
+};
+
+const PAYMENT_METHODS: { value: PaymentMethod; label: string }[] = [
+  { value: "PIX", label: "Pix" },
+  { value: "BOLETO", label: "Boleto" },
+  { value: "CREDIT_CARD", label: "Cartão de crédito" },
+];
+
 function CartPage() {
   const { detailed, subtotal, savings, remove, clear, add, has } = useCart();
   const { products } = useProductCatalog();
@@ -36,6 +58,45 @@ function CartPage() {
   const [discount, setDiscount] = useState(0);
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [pending, setPending] = useState<PendingPayment | null>(null);
+
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("PIX");
+  const [payer, setPayer] = useState({ name: "", email: "", cpfCnpj: "", phone: "" });
+  const [card, setCard] = useState({
+    number: "",
+    holderName: "",
+    expiryMonth: "",
+    expiryYear: "",
+    ccv: "",
+    postalCode: "",
+    addressNumber: "",
+  });
+
+  useEffect(() => {
+    if (!user) return;
+    setPayer((p) => ({
+      ...p,
+      name: p.name || user.displayName || "",
+      email: p.email || user.email || "",
+    }));
+  }, [user]);
+
+  useEffect(() => {
+    if (!pending || pending.status !== "pending" || !user) return;
+    const interval = setInterval(async () => {
+      try {
+        const idToken = await user.getIdToken();
+        const { status } = await getOrderStatus({ data: { idToken, orderId: pending.orderId } });
+        if (status === "paid") {
+          setPending(null);
+          setDone(true);
+        }
+      } catch {
+        /* keep polling silently */
+      }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [pending, user]);
 
   const upsells = products
     .filter((p) => !has(p.slug) && p.category === detailed[0]?.product.category)
@@ -58,22 +119,69 @@ function CartPage() {
       navigate({ to: "/entrar" });
       return;
     }
+
+    if (total > 0) {
+      if (
+        !payer.name.trim() ||
+        !payer.email.trim() ||
+        !payer.cpfCnpj.trim() ||
+        !payer.phone.trim()
+      ) {
+        toast.error("Preencha nome, e-mail, CPF/CNPJ e telefone para continuar.");
+        return;
+      }
+      if (
+        paymentMethod === "CREDIT_CARD" &&
+        (!card.number.trim() ||
+          !card.holderName.trim() ||
+          !card.expiryMonth.trim() ||
+          !card.expiryYear.trim() ||
+          !card.ccv.trim() ||
+          !card.postalCode.trim() ||
+          !card.addressNumber.trim())
+      ) {
+        toast.error("Preencha todos os dados do cartão.");
+        return;
+      }
+    }
+
     setSubmitting(true);
     try {
       const idToken = await user.getIdToken();
-      await createOrder({
+      const response = await createOrder({
         data: {
           idToken,
           items: detailed.map(({ product, qty }) => ({ slug: product.slug, qty })),
           couponCode: coupon.trim() || undefined,
+          ...(total > 0
+            ? {
+                paymentMethod,
+                payer,
+                ...(paymentMethod === "CREDIT_CARD" ? { creditCard: card } : {}),
+              }
+            : {}),
         },
       });
       clear();
-      setDone(true);
+      if (response.status === "paid") {
+        setDone(true);
+      } else {
+        setPending(response as PendingPayment);
+      }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Não foi possível finalizar a compra.");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const copyPixCode = async () => {
+    if (!pending?.pixPayload) return;
+    try {
+      await navigator.clipboard.writeText(pending.pixPayload);
+      toast.success("Código Pix copiado");
+    } catch {
+      toast.error("Não foi possível copiar o código");
     }
   };
 
@@ -94,6 +202,50 @@ function CartPage() {
               <Link to="/produtos">Continuar no catálogo</Link>
             </Button>
           </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (pending) {
+    return (
+      <section className="band-dark">
+        <div className="container-editorial flex min-h-screen flex-col items-center justify-center py-40 text-center">
+          <p className="label-micro text-primary">Aguardando pagamento</p>
+          <h1 className="display-section mt-8 max-w-2xl">
+            {pending.paymentMethod === "PIX"
+              ? "Escaneie ou copie o código Pix"
+              : "Seu boleto foi gerado"}
+          </h1>
+
+          {pending.paymentMethod === "PIX" && pending.pixQrCodeImage && (
+            <>
+              <img
+                src={`data:image/png;base64,${pending.pixQrCodeImage}`}
+                alt="QR Code Pix"
+                className="mt-10 h-56 w-56 bg-white p-2"
+              />
+              <Button variant="hairline" size="editorial" className="mt-6" onClick={copyPixCode}>
+                Copiar código Pix
+              </Button>
+            </>
+          )}
+
+          {pending.paymentMethod === "BOLETO" && (
+            <Button asChild variant="champagne" size="editorial" className="mt-10">
+              <a href={pending.bankSlipUrl ?? pending.invoiceUrl} target="_blank" rel="noreferrer">
+                Abrir boleto
+              </a>
+            </Button>
+          )}
+
+          <p className="mt-8 max-w-md text-sm text-muted-foreground">
+            Assim que o pagamento for confirmado, o acesso é liberado automaticamente nesta página —
+            não precisa recarregar.
+          </p>
+          <Button asChild variant="hairline" size="editorial" className="mt-8">
+            <Link to="/conta">Ver meus pedidos</Link>
+          </Button>
         </div>
       </section>
     );
@@ -179,6 +331,111 @@ function CartPage() {
                     </ul>
                   </div>
                 )}
+
+                {total > 0 && (
+                  <div className="mt-16 border border-border p-8">
+                    <p className="label-micro text-accent-foreground">Dados para pagamento</p>
+                    <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                      <input
+                        className={inputClass}
+                        placeholder="Nome completo"
+                        value={payer.name}
+                        onChange={(e) => setPayer((p) => ({ ...p, name: e.target.value }))}
+                      />
+                      <input
+                        className={inputClass}
+                        placeholder="E-mail"
+                        type="email"
+                        value={payer.email}
+                        onChange={(e) => setPayer((p) => ({ ...p, email: e.target.value }))}
+                      />
+                      <input
+                        className={inputClass}
+                        placeholder="CPF ou CNPJ"
+                        value={payer.cpfCnpj}
+                        onChange={(e) => setPayer((p) => ({ ...p, cpfCnpj: e.target.value }))}
+                      />
+                      <input
+                        className={inputClass}
+                        placeholder="Telefone com DDD"
+                        value={payer.phone}
+                        onChange={(e) => setPayer((p) => ({ ...p, phone: e.target.value }))}
+                      />
+                    </div>
+
+                    <p className="label-micro mt-8 text-accent-foreground">Forma de pagamento</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {PAYMENT_METHODS.map((m) => (
+                        <button
+                          key={m.value}
+                          type="button"
+                          onClick={() => setPaymentMethod(m.value)}
+                          className={`h-11 border px-5 text-sm transition-colors ${
+                            paymentMethod === m.value
+                              ? "border-accent-foreground bg-accent-foreground text-accent"
+                              : "border-input text-muted-foreground hover:border-accent-foreground"
+                          }`}
+                        >
+                          {m.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    {paymentMethod === "CREDIT_CARD" && (
+                      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                        <input
+                          className={`${inputClass} sm:col-span-2`}
+                          placeholder="Número do cartão"
+                          inputMode="numeric"
+                          value={card.number}
+                          onChange={(e) => setCard((c) => ({ ...c, number: e.target.value }))}
+                        />
+                        <input
+                          className={`${inputClass} sm:col-span-2`}
+                          placeholder="Nome impresso no cartão"
+                          value={card.holderName}
+                          onChange={(e) => setCard((c) => ({ ...c, holderName: e.target.value }))}
+                        />
+                        <input
+                          className={inputClass}
+                          placeholder="Mês de validade (MM)"
+                          inputMode="numeric"
+                          value={card.expiryMonth}
+                          onChange={(e) => setCard((c) => ({ ...c, expiryMonth: e.target.value }))}
+                        />
+                        <input
+                          className={inputClass}
+                          placeholder="Ano de validade (AAAA)"
+                          inputMode="numeric"
+                          value={card.expiryYear}
+                          onChange={(e) => setCard((c) => ({ ...c, expiryYear: e.target.value }))}
+                        />
+                        <input
+                          className={inputClass}
+                          placeholder="CVV"
+                          inputMode="numeric"
+                          value={card.ccv}
+                          onChange={(e) => setCard((c) => ({ ...c, ccv: e.target.value }))}
+                        />
+                        <input
+                          className={inputClass}
+                          placeholder="CEP de cobrança"
+                          inputMode="numeric"
+                          value={card.postalCode}
+                          onChange={(e) => setCard((c) => ({ ...c, postalCode: e.target.value }))}
+                        />
+                        <input
+                          className={inputClass}
+                          placeholder="Número do endereço"
+                          value={card.addressNumber}
+                          onChange={(e) =>
+                            setCard((c) => ({ ...c, addressNumber: e.target.value }))
+                          }
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -233,14 +490,9 @@ function CartPage() {
             >
               {submitting ? "Finalizando…" : "Finalizar compra"}
             </Button>
-            {total > 0 && (
-              <p className="mt-4 text-xs text-muted-foreground">
-                Pagamento por Pix, cartão e boleto chega em breve. Por enquanto só é possível
-                finalizar carrinhos com itens gratuitos.
-              </p>
-            )}
             <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
-              Entrega digital imediata por link seguro e temporário. Ao continuar você concorda com os{" "}
+              Entrega digital imediata por link seguro e temporário. Ao continuar você concorda com
+              os{" "}
               <Link to="/termos-de-uso" className="link-underline text-foreground">
                 termos de uso
               </Link>{" "}

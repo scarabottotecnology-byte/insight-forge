@@ -39,17 +39,32 @@ Estimativa em pontos (1 = ~meio dia).
 | V-106 | Custom claim `role` (admin/cliente) + mecanismo para concedê-la | ✅ | P0 | 2 | `scripts/set-admin-role.mjs` (`bun run set-admin <email>`) chama `setCustomUserClaims` |
 | V-107 | Proteger `/conta` com gate de rota autenticada | ✅ | P0 | 1 | Redireciona para `/entrar` se deslogado |
 
+## Fase 1B — Criação de Produtos / Conteúdo (P0)
+
+> Sem isso, o checkout da Fase 2 teria pra onde vender, mas nada de real pra entregar: os
+> 12 produtos do catálogo (V-103) hoje são só ficha de marketing no Firestore — nenhum tem
+> o arquivo de entrega real (.xlsx/.docx/.pptx/.pdf). Backlog de ideação já organizado no
+> ClickUp, espaço **Vertice - Ecommerce**, lista **Desenvolvimento De Produtos**.
+
+| # | Issue | Status | Prioridade | Est. | Nota |
+|---|---|---|---|---|---|
+| PC-01 | Checklist de Abertura de Empresa — conteúdo real do produto gratuito | 🔶 | P0 | 2 | Arquivos criados: `deliverables/checklist-abertura-de-empresa.xlsx` (editável, com painel de progresso) e `.pdf` (interativo, 48 checkboxes reais). Falta revisão por contador/advogado e ligar à entrega (depende de V-403) |
+| PC-02 | Criar os arquivos reais dos produtos pagos do catálogo atual (12 itens: planilhas, e-books, kits, templates) | 🔶 | P0 | 13 | 1ª onda entregue: `deliverables/planilha-fluxo-de-caixa-empresarial.xlsx` (5 abas, fórmulas reais) + `.pdf` (manual de implantação, 14 páginas). Faltam 11 produtos |
+| PC-03 | Padronizar o pipeline de criação (briefing → conteúdo/fórmulas → design → revisão → upload) | ⬜ | P1 | 2 | Esboçado no ClickUp; falta formalizar os status/checklist por etapa |
+| PC-04 | Convenção de nomenclatura e organização dos arquivos-fonte antes do upload em Storage | ⬜ | P1 | 1 | Precisa bater com o path `/deliverables/{slug}/...` usado em `storage.rules` (V-203) |
+| PC-05 | Priorizar e desenvolver as próximas ideias do backlog (Estante do CEO/CFO, novos e-books/templates) | ⬜ | P2 | — | Backlog vivo no ClickUp (tarefa "Ideias"), sem prazo fixo |
+
 ## Fase 2 — Pagamento e Entrega Digital (P0)
 
-| # | Issue | Status | Prioridade | Est. |
-|---|---|---|---|---|
-| V-201 | Integração de pagamento (checkout, Pix/cartão/boleto) | ⬜ | P0 | 5 |
-| V-202 | Webhook de confirmação → criar pedido e liberar acesso | ⬜ | P0 | 3 |
-| V-203 | Storage privado dos arquivos + links assinados temporários | ⬜ | P0 | 3 |
-| V-204 | Limite de downloads por pedido e log de auditoria | ⬜ | P1 | 2 |
-| V-205 | E-mail transacional: confirmação de compra + acesso | ⬜ | P0 | 2 |
-| V-206 | Emissão/registro fiscal e recibo em PDF | ⬜ | P2 | 3 |
-| V-207 | Cupons reais no banco (validade, uso único, % ou fixo) | ⬜ | P1 | 2 |
+| # | Issue | Status | Prioridade | Est. | Nota |
+|---|---|---|---|---|---|
+| V-201 | Integração de pagamento (checkout, Pix/cartão/boleto) | 🔶 | P0 | 5 | **Implementado com Asaas**: `src/lib/asaas.server.ts` (cliente server-only) + `createOrder` em `src/lib/orders.functions.ts` cria cliente/cobrança real (Pix, boleto ou cartão) e a UI de checkout (`carrinho.tsx`) coleta os dados e mostra QR Pix / link do boleto / resultado do cartão. Falta configurar `ASAAS_API_KEY`/`ASAAS_ENV`/`ASAAS_WEBHOOK_TOKEN` na Vercel (produção) e testar com uma cobrança real. |
+| V-202 | Webhook de confirmação → criar pedido e liberar acesso | 🔶 | P0 | 3 | **Implementado**: `src/routes/api.webhooks.asaas.ts` recebe os eventos de pagamento e atualiza o status do pedido no Firestore. Webhook **já cadastrado na Asaas via API** (`https://www.verticebooks.com.br/api/webhooks/asaas`, id `131fcdd0-495c-49e8-ba48-751350a50a74`). Falta configurar as env vars na Vercel e testar um evento real — e ligar a liberação de acesso de fato (depende de V-203). |
+| V-203 | Storage privado dos arquivos + links assinados temporários | ⬜ | P0 | 3 | Pedido pago (grátis ou via Asaas) ainda não gera nenhum `downloads/{grantId}` — a tela "Ir para downloads" não tem o que mostrar até isso existir. |
+| V-204 | Limite de downloads por pedido e log de auditoria | ⬜ | P1 | 2 | |
+| V-205 | E-mail transacional: confirmação de compra + acesso | ⬜ | P0 | 2 | |
+| V-206 | Emissão/registro fiscal e recibo em PDF | ⬜ | P2 | 3 | |
+| V-207 | Cupons reais no banco (validade, uso único, % ou fixo) | ⬜ | P1 | 2 | |
 
 ## Fase 3 — Experiência do Cliente (P1)
 
@@ -111,18 +126,20 @@ Estimativa em pontos (1 = ~meio dia).
 
 ## Marcos
 
-1. **MVP comercial** — Fases 1 e 2 (venda e entrega ponta a ponta). *Fase 1 está com 6 de 7 itens prontos (falta fechar `orders`/`downloads` server-side em V-102); Fase 2 não iniciada — é o maior bloco de trabalho restante para vender.*
+1. **MVP comercial** — Fases 1, 1B e 2 (venda e entrega ponta a ponta, com produto real por trás). *Fase 1 está com 6 de 7 itens prontos (falta fechar `orders`/`downloads` server-side em V-102); Fase 1B (criação dos produtos) e Fase 2 (pagamento) não iniciadas — são os dois maiores blocos de trabalho restantes, e podem correr em paralelo (conteúdo não depende de checkout, e vice-versa).*
 2. **Loja completa** — Fases 3, 4 e 5.
 3. **Escala** — Fases 6 e 7.
 
-## Sequência recomendada (atualizada — 2026-09-02)
+## Sequência recomendada (atualizada — 2026-09-12)
 
 1. ~~`V-106` — script/função admin para conceder `role: admin` via custom claim.~~ ✅ feito (`scripts/set-admin-role.mjs`).
 2. ~~`V-401` — trocar leitura de `journal` estático por Firestore.~~ ✅ feito (home e `/insights` agora buscam de `posts`).
 3. ~~`V-103` — migrar o catálogo de produtos (`catalog.ts`) para Firestore.~~ ✅ feito — `src/lib/products.ts` (fetch + cache) e `src/lib/product-catalog.tsx` (contexto de catálogo, populado pelo loader do `__root.tsx`) substituem o array estático em `cart.tsx`, `conta.tsx`, `carrinho.tsx`, `produtos.*`, `insights.*`, `LeadCapture`, `Footer` e `sitemap.xml`. Catálogo semeado via `bun run seed:catalog`; fluxo carrinho/bundle/cupom testado ponta a ponta.
 4. ~~`V-102` (parte 1) — writer server-side real para `orders`.~~ ✅ feito — `src/lib/orders.functions.ts` (server function autenticada, revalida preço no Firestore, nunca confia no cliente). Carrinho 100% gratuito finaliza de verdade e grava pedido; carrinho com item pago é bloqueado com aviso claro, já que não existe gateway de pagamento ainda. `downloads` fica para quando V-203 (storage) existir — apontar para um arquivo que não existe seria só encenação.
-5. `V-201 → V-202 → V-203 → V-205` — checkout, webhook, storage privado com link assinado, e-mail de confirmação. Este é o bloco crítico do MVP comercial e ainda não foi iniciado.
-6. `V-207` — cupons reais (hoje o carrinho já suporta cupom, mas não valida contra o banco).
-7. `V-606` — revisão de segurança antes de abrir pagamentos de verdade.
-8. `V-301` — "Meus produtos"/"Downloads" com dados reais assim que houver pedidos de verdade.
-9. `V-501` — painel admin (CRUD de produtos, gestão de pedidos) — agora desbloqueado por V-106.
+5. `PC-01` — conteúdo real do Checklist de Abertura de Empresa (o produto gratuito). Prioridade máxima em conteúdo: é a isca que já está ativa no site sem nada pra entregar.
+6. ~~`V-201` e `V-202` — checkout Asaas (Pix/boleto/cartão) + webhook de confirmação.~~ 🔶 implementado e webhook já cadastrado na Asaas via API — falta só configurar `ASAAS_API_KEY`/`ASAAS_ENV`/`ASAAS_WEBHOOK_TOKEN` na Vercel e testar com uma cobrança real. `V-203` (storage) e `V-205` (e-mail) continuam não iniciados — sem eles o pedido é confirmado mas não entrega nada.
+7. `PC-02` — criar os arquivos reais dos 12 produtos pagos do catálogo, em ondas por categoria. Sem isso, `V-203` não tem nada de real para servir.
+8. `V-207` — cupons reais (hoje o carrinho já suporta cupom, mas não valida contra o banco).
+9. `V-606` — revisão de segurança antes de abrir pagamentos de verdade.
+10. `V-301` — "Meus produtos"/"Downloads" com dados reais assim que houver pedidos de verdade.
+11. `V-501` — painel admin (CRUD de produtos, gestão de pedidos) — agora desbloqueado por V-106.
