@@ -8,6 +8,13 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal } from "@/components/site/Reveal";
 import { ScrollProgress } from "@/components/site/ScrollProgress";
 import { Button } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import { brl } from "@/lib/catalog";
 import { db } from "@/lib/firebase";
 import { useProductCatalog } from "@/lib/product-catalog";
@@ -74,6 +81,17 @@ const trust = [
   { label: "Atualizações vitalícias", note: "Novas versões sem custo" },
 ];
 
+const partnerSlides = [
+  {
+    eyebrow: "Parceiro Vértice",
+    title: "Conheça nossas soluções de consultoria",
+    description:
+      "Diagnóstico, indicadores e acompanhamento sob medida pela Keystone — para quem precisa de mais do que uma ferramenta pronta.",
+    cta: "Conhecer a Keystone",
+    href: "https://keystone-phi.vercel.app",
+  },
+];
+
 function Home() {
   const { journal } = Route.useLoaderData();
   const { products, categories } = useProductCatalog();
@@ -137,6 +155,40 @@ function Home() {
             </Parallax>
             <div className="absolute -right-6 -bottom-6 hidden h-24 w-24 border-r border-b border-primary/40 lg:block" />
           </Reveal>
+        </div>
+      </section>
+
+      {/* DESTAQUE: PARCEIROS */}
+      <section className="band-dark border-b border-border">
+        <div className="container-editorial py-16 lg:py-20">
+          <Carousel className="relative">
+            <CarouselContent>
+              {partnerSlides.map((slide) => (
+                <CarouselItem key={slide.title}>
+                  <Reveal className="flex flex-col items-start gap-8 border border-primary/40 bg-secondary p-10 lg:flex-row lg:items-center lg:justify-between lg:p-16">
+                    <div className="max-w-xl">
+                      <p className="label-micro text-accent-foreground">{slide.eyebrow}</p>
+                      <h2 className="display-section mt-6">{slide.title}</h2>
+                      <p className="mt-6 text-base leading-relaxed text-muted-foreground">
+                        {slide.description}
+                      </p>
+                    </div>
+                    <Button asChild variant="champagne" size="editorial" className="shrink-0">
+                      <a href={slide.href} target="_blank" rel="noopener noreferrer">
+                        {slide.cta}
+                      </a>
+                    </Button>
+                  </Reveal>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            {partnerSlides.length > 1 && (
+              <>
+                <CarouselPrevious className="left-2 border-primary/40 bg-secondary text-primary lg:-left-5" />
+                <CarouselNext className="right-2 border-primary/40 bg-secondary text-primary lg:-right-5" />
+              </>
+            )}
+          </Carousel>
         </div>
       </section>
 
@@ -374,29 +426,6 @@ function Home() {
                 Assinar
               </Button>
             </form>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* CROSS-SELL: KEYSTONE CONSULTORIA */}
-      <section className="band-light border-t border-border">
-        <div className="container-editorial py-16 lg:py-20">
-          <Reveal className="flex flex-wrap items-center justify-between gap-8 border border-primary/30 bg-secondary p-10 lg:p-14">
-            <div className="max-w-lg">
-              <p className="label-micro text-accent-foreground">Consultoria</p>
-              <h2 className="mt-4 text-2xl leading-tight lg:text-3xl">
-                Conheça nossas soluções de consultoria
-              </h2>
-              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                Diagnóstico, indicadores e acompanhamento sob medida pela Keystone — para quem
-                precisa de mais do que uma ferramenta pronta.
-              </p>
-            </div>
-            <Button asChild variant="champagne" size="editorial">
-              <a href="https://keystone-phi.vercel.app" target="_blank" rel="noopener noreferrer">
-                Conhecer a Keystone
-              </a>
-            </Button>
           </Reveal>
         </div>
       </section>
