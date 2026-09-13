@@ -14,6 +14,9 @@ import type { Product } from "@/lib/catalog";
  *                             from the browser. Owner can read; only server/admin can write.
  * - `downloads/{grantId}`   — one signed-download grant per (order, product). Server-only writes;
  *                             owner can read to see remaining download count / expiry.
+ * - `deliverables/{slug}`   — private storage path of each product's file (V-203). No client
+ *                             access at all; only the Admin SDK resolves it.
+ * - `downloadLogs/{logId}`  — audit trail of every signed link handed out (V-204).
  */
 
 export type UserRole = "admin" | "cliente";
@@ -59,15 +62,44 @@ export type Order = {
   updatedAt: number;
 };
 
+/**
+ * Private file behind a product (V-203). Lives in its own collection instead of on the
+ * public `products/{slug}` doc so the storage path is never readable from the browser —
+ * Firestore rules deny every client read, and only the Admin SDK ever resolves it.
+ */
+export type Deliverable = {
+  productSlug: string;
+  storagePath: string;
+  fileName: string;
+  contentType: string;
+  sizeBytes: number;
+  updatedAt: number;
+};
+
 export type DownloadGrant = {
   id: string;
   orderId: string;
   userId: string;
   productSlug: string;
   storagePath: string;
+  fileName: string;
   downloadCount: number;
   maxDownloads: number;
+  /** Set by a refund/chargeback webhook — the grant stays for the audit trail but stops working. */
+  revoked: boolean;
+  revokedAt?: number;
   expiresAt: number;
+  createdAt: number;
+};
+
+/** One row per signed URL handed out (V-204). Server-only writes, admin-only reads. */
+export type DownloadLog = {
+  grantId: string;
+  orderId: string;
+  userId: string;
+  productSlug: string;
+  downloadNumber: number;
+  userAgent?: string;
   createdAt: number;
 };
 
