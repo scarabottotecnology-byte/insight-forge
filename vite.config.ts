@@ -14,5 +14,17 @@ export default defineConfig({
   },
   // Hard-pin Vercel as the deploy target instead of relying on Nitro's
   // cloudflare-module fallback (which local builds hit with no platform env vars set).
-  nitro: { preset: "vercel" },
+  nitro: {
+    preset: "vercel",
+    // google-gax (a firebase-admin/@google-cloud/firestore dependency) locates its .proto
+    // files at runtime via `path.join(__dirname, ...)`. Bundling it into one flat ESM chunk
+    // both breaks that __dirname reference ("ReferenceError: __dirname is not defined in ES
+    // module scope", crashing every SSR request) and leaves the actual .proto files behind.
+    // traceDeps keeps these as real, untouched packages on disk instead of bundling them —
+    // this option is real nitro config (see node_modules/nitro/dist/docs), just not in this
+    // wrapper's narrower TS surface, hence the ts-expect-error below.
+    // @ts-expect-error — traceDeps isn't in LovableViteTanstackOptions["nitro"]'s type, but it
+    // is spread straight into nitro()'s real options at runtime.
+    traceDeps: ["firebase-admin", "@google-cloud/firestore", "@google-cloud/storage", "google-gax*"],
+  },
 });
