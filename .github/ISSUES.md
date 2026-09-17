@@ -162,10 +162,14 @@
 - **Estimativa:** 3 pontos
 
 ### Critérios de aceitação
-- [ ] Definir escopo técnico
-- [ ] Implementar
-- [ ] Revisar qualidade e segurança
-- [ ] Atualizar documentação, se necessário
+- [x] Arquivos ficam em `deliverables/{slug}/...` no Storage, com leitura negada a qualquer cliente (`storage.rules`)
+- [x] O caminho do arquivo vive em `deliverables/{slug}` no Firestore, fechado para o cliente
+- [x] Pedido pago (grátis, cartão aprovado na hora ou webhook) gera `downloads/{grantId}`
+- [x] Download só sai por URL assinada V4 de curta duração, emitida no servidor após conferir dono + pedido pago
+- [x] `/conta` lista os produtos liberados e baixa de verdade
+- [x] `bun run upload:deliverable <slug> <arquivo>` sobe e registra o arquivo
+- [ ] Arquivos reais dos produtos enviados ao Storage de produção
+- [ ] `FIREBASE_STORAGE_BUCKET` configurada na Vercel e um download testado ponta a ponta
 
 ## V-204 — Limite de downloads por pedido e log de auditoria
 - **Fase:** Fase 2 — Pagamento e Entrega Digital (P0)
@@ -173,10 +177,11 @@
 - **Estimativa:** 2 pontos
 
 ### Critérios de aceitação
-- [ ] Definir escopo técnico
-- [ ] Implementar
-- [ ] Revisar qualidade e segurança
-- [ ] Atualizar documentação, se necessário
+- [x] Cada grant tem limite de downloads (`DOWNLOAD_MAX_PER_ORDER`, padrão 5) e validade (`DOWNLOAD_GRANT_DAYS`)
+- [x] O consumo é feito em transação, então cliques simultâneos não furam o limite
+- [x] Cada link emitido vira uma linha em `downloadLogs` (pedido, produto, nº do download, user agent)
+- [x] Reembolso/chargeback revoga os grants do pedido sem apagar a trilha de auditoria
+- [x] `downloadLogs` é legível só por admin; nenhum cliente escreve nessas coleções
 
 ## V-205 — E-mail transacional: confirmação de compra + acesso
 - **Fase:** Fase 2 — Pagamento e Entrega Digital (P0)

@@ -1,7 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { createPayment, findOrCreateCustomer, getPixQrCode } from "@/lib/asaas.server";
-import { adminAuth, adminDb } from "@/lib/firebase-admin";
+import { getAdminAuth, getAdminDb } from "@/lib/firebase-admin";
+import { issueGrantsForOrder } from "@/lib/fulfillment";
 import type { Order, OrderItem } from "@/lib/firestore-schema";
 import type { Product } from "@/lib/catalog";
 
@@ -56,11 +57,13 @@ function tomorrowIso() {
 export const createOrder = createServerFn({ method: "POST" })
   .validator(inputSchema)
   .handler(async ({ data }) => {
-    const decoded = await adminAuth.verifyIdToken(data.idToken).catch(() => null);
+    const decoded = await getAdminAuth()
+      .verifyIdToken(data.idToken)
+      .catch(() => null);
     if (!decoded) throw new Error("Sessão expirada. Entre novamente para finalizar a compra.");
 
     const productSnaps = await Promise.all(
-      data.items.map((i) => adminDb.collection("products").doc(i.slug).get()),
+      data.items.map((i) => getAdminDb().collection("products").doc(i.slug).get()),
     );
 
     const items: OrderItem[] = [];
@@ -82,7 +85,7 @@ export const createOrder = createServerFn({ method: "POST" })
     const total = Math.max(subtotal - discount, 0);
 
     const now = Date.now();
-    const ref = adminDb.collection("orders").doc();
+    const ref = getAdminDb().collection("orders").doc();
 
     if (total === 0) {
       const order: Order = {
@@ -97,6 +100,7 @@ export const createOrder = createServerFn({ method: "POST" })
         ...(data.couponCode ? { couponCode: data.couponCode } : {}),
       };
       await ref.set(order);
+      await releaseFiles(order);
       return { orderId: ref.id, status: "paid" as const };
     }
 
@@ -176,6 +180,10 @@ export const createOrder = createServerFn({ method: "POST" })
     };
     await ref.set(order);
 
+    // A credit card approved at creation time never produces a webhook we have to wait for,
+    // so the files are released right here. PIX/Boleto stay pending until the webhook lands.
+    if (status === "paid") await releaseFiles(order);
+
     return {
       orderId: ref.id,
       status,
@@ -188,16 +196,39 @@ export const createOrder = createServerFn({ method: "POST" })
     };
   });
 
+/**
+ * Releases the purchased files (V-203) without ever failing the checkout over it.
+ *
+ * The order is already written — and, on the card path, already charged. Throwing here
+ * would show the buyer an error for a purchase that actually went through, so a delivery
+ * problem is logged for support to re-issue instead of surfacing as a failed payment.
+ */
+async function releaseFiles(order: Order) {
+  try {
+    const { missingDeliverable } = await issueGrantsForOrder(order);
+    if (missingDeliverable.length > 0) {
+      console.error(
+        `Pedido ${order.id} pago, mas sem arquivo cadastrado em deliverables/ para: ` +
+          missingDeliverable.join(", "),
+      );
+    }
+  } catch (error) {
+    console.error(`Falha ao liberar os downloads do pedido ${order.id}:`, error);
+  }
+}
+
 const orderStatusSchema = z.object({ idToken: z.string().min(1), orderId: z.string().min(1) });
 
 /** Lets the checkout result screen poll for PIX/Boleto confirmation without re-reading Firestore rules from the client. */
 export const getOrderStatus = createServerFn({ method: "POST" })
   .validator(orderStatusSchema)
   .handler(async ({ data }) => {
-    const decoded = await adminAuth.verifyIdToken(data.idToken).catch(() => null);
+    const decoded = await getAdminAuth()
+      .verifyIdToken(data.idToken)
+      .catch(() => null);
     if (!decoded) throw new Error("Sessão expirada.");
 
-    const snap = await adminDb.collection("orders").doc(data.orderId).get();
+    const snap = await getAdminDb().collection("orders").doc(data.orderId).get();
     if (!snap.exists) throw new Error("Pedido não encontrado.");
     const order = snap.data() as Order;
     if (order.userId !== decoded.uid) throw new Error("Pedido não encontrado.");
