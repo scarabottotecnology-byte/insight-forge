@@ -1,6 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Check } from "lucide-react";
-import { toast } from "sonner";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal } from "@/components/site/Reveal";
 import {
@@ -10,7 +9,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/lib/cart";
 import { brl } from "@/lib/catalog";
 import { getOrigin } from "@/lib/origin.functions";
 import { useProductCatalog } from "@/lib/product-catalog";
@@ -102,7 +100,6 @@ export const Route = createFileRoute("/produtos/$slug")({
 
 function ProductPage() {
   const { product } = Route.useLoaderData();
-  const { add, has } = useCart();
   const { products, getProduct } = useProductCatalog();
 
   const bundleItems = (product.bundleOf ?? []).map((s) => getProduct(s)).filter(Boolean);
@@ -114,10 +111,7 @@ function ProductPage() {
     .filter((p) => p.slug !== product.slug && p.type === "Kit")
     .slice(0, 1)[0];
 
-  const addToCart = () => {
-    add(product.slug);
-    toast.success("Adicionado ao carrinho", { description: product.name });
-  };
+  const buyLabel = product.price === 0 ? "Obter gratuitamente" : "Comprar na Kiwify";
 
   return (
     <>
@@ -175,12 +169,17 @@ function ProductPage() {
             </div>
 
             <div className="mt-8 flex flex-wrap gap-4">
-              <Button variant="champagne" size="editorial" onClick={addToCart}>
-                {has(product.slug) ? "No carrinho" : product.price === 0 ? "Obter gratuitamente" : "Adicionar ao carrinho"}
-              </Button>
-              <Button asChild variant="hairline" size="editorial">
-                <Link to="/carrinho">Ir para o checkout</Link>
-              </Button>
+              {product.kiwifyUrl ? (
+                <Button asChild variant="champagne" size="editorial">
+                  <a href={product.kiwifyUrl} target="_blank" rel="noopener noreferrer">
+                    {buyLabel}
+                  </a>
+                </Button>
+              ) : (
+                <Button variant="champagne" size="editorial" disabled>
+                  Em breve
+                </Button>
+              )}
             </div>
             <p className="mt-6 text-xs text-muted-foreground">
               Acesso imediato após a confirmação · Atualizações vitalícias · Arquivos editáveis
@@ -346,9 +345,17 @@ function ProductPage() {
             Comece a usar {product.name.toLowerCase()} hoje
           </h2>
           <div className="mt-12 flex justify-center">
-            <Button variant="champagne" size="editorial" onClick={addToCart}>
-              {has(product.slug) ? "No carrinho" : "Adicionar ao carrinho"} — {brl(product.price)}
-            </Button>
+            {product.kiwifyUrl ? (
+              <Button asChild variant="champagne" size="editorial">
+                <a href={product.kiwifyUrl} target="_blank" rel="noopener noreferrer">
+                  {buyLabel} — {brl(product.price)}
+                </a>
+              </Button>
+            ) : (
+              <Button variant="champagne" size="editorial" disabled>
+                Em breve
+              </Button>
+            )}
           </div>
         </div>
       </section>
