@@ -60,7 +60,7 @@ Estimativa em pontos (1 = ~meio dia).
 | # | Issue | Status | Prioridade | Est. | Nota |
 |---|---|---|---|---|---|
 | PC-01 | Checklist de Abertura de Empresa — conteúdo real do produto gratuito | 🔶 | P0 | 2 | Arquivos criados: `deliverables/checklist-abertura-de-empresa.xlsx` (editável, com painel de progresso) e `.pdf` (interativo, 48 checkboxes reais). Falta revisão por contador/advogado e ligar à entrega (depende de V-403) |
-| PC-02 | Criar os arquivos reais dos produtos pagos do catálogo atual (12 itens: planilhas, e-books, kits, templates) | 🔶 | P0 | 13 | 1ª onda entregue: `deliverables/planilha-fluxo-de-caixa-empresarial.xlsx` (5 abas, fórmulas reais) + `.pdf` (manual de implantação, 14 páginas). Faltam 11 produtos |
+| PC-02 | Criar os arquivos reais dos produtos pagos do catálogo atual (12 itens: planilhas, e-books, kits, templates) | 🔶 | P0 | 13 | 2ª onda entregue: `deliverables/planilha-dre-gerencial.xlsx` (Receitas por canal, 5 grupos de despesa com fornecedores reais, DRE Macro mês a mês com margem de contribuição/EBITDA/ponto de equilíbrio, Dashboard com 3 gráficos) + macros VBA opcionais em `.md` separado. 1ª onda: `planilha-fluxo-de-caixa-empresarial.xlsx` + `.pdf`. Faltam 10 produtos. **Atenção:** o spec "Períodos: 24 meses" da Planilha de DRE Gerencial no catálogo não bate com o arquivo entregue (12 meses) — corrigir o campo no Firestore. |
 | PC-03 | Padronizar o pipeline de criação (briefing → conteúdo/fórmulas → design → revisão → upload) | ⬜ | P1 | 2 | Esboçado no ClickUp; falta formalizar os status/checklist por etapa |
 | PC-04 | Convenção de nomenclatura e organização dos arquivos-fonte antes do upload em Storage | ⬜ | P1 | 1 | Precisa bater com o path `/deliverables/{slug}/...` usado em `storage.rules` (V-203) |
 | PC-05 | Priorizar e desenvolver as próximas ideias do backlog (Estante do CEO/CFO, novos e-books/templates) | ⬜ | P2 | — | Backlog vivo no ClickUp (tarefa "Ideias"), sem prazo fixo |
@@ -155,7 +155,7 @@ Estimativa em pontos (1 = ~meio dia).
 1. ~~`V-106`, `V-401`, `V-103`, `V-102` (parte 1)~~ ✅ feitos — ver notas nas fases acima.
 2. ~~Mockups únicos por produto (12 capas editoriais)~~ ✅ feito (PR #5).
 3. ~~Preparar o site para vender via Kiwify (`kiwifyUrl`, botões, carrinho/Asaas desativados do menu)~~ ✅ feito (PR #5) — falta só o dado, não código.
-4. **`PC-02` — criar os arquivos reais dos 11 produtos pagos que ainda faltam.** Agora é o item que bloqueia tanto o site quanto a Kiwify diretamente; prioridade máxima do projeto.
+4. **`PC-02` — criar os arquivos reais dos 10 produtos pagos que ainda faltam.** Agora é o item que bloqueia tanto o site quanto a Kiwify diretamente; prioridade máxima do projeto.
 5. **`K-001`/`K-002` — cadastrar cada produto na Kiwify assim que o arquivo dele ficar pronto, e colar o link de checkout no Firestore.** Pode ser feito produto a produto, em paralelo com o item 4 (não precisa esperar todos os 11).
 6. `PC-01` — fechar a revisão por contador/advogado do Checklist gratuito.
 7. `V-606` — revisão de segurança das regras Firestore/Storage (ainda vale, independente da Kiwify).
