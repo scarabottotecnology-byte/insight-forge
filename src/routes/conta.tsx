@@ -1,11 +1,9 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Download, FileText, Heart, LifeBuoy, Receipt, User } from "lucide-react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { LifeBuoy, Receipt, User } from "lucide-react";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/lib/auth";
-import { brl } from "@/lib/catalog";
-import { useProductCatalog } from "@/lib/product-catalog";
 
 export const Route = createFileRoute("/conta")({
   head: () => ({
@@ -13,10 +11,10 @@ export const Route = createFileRoute("/conta")({
       { title: "Minha conta — Vértice" },
       {
         name: "description",
-        content: "Área do cliente: produtos adquiridos, downloads seguros, pedidos e dados de acesso.",
+        content: "Área do cliente Vértice: dados de acesso e suporte.",
       },
       { property: "og:title", content: "Minha conta — Vértice" },
-      { property: "og:description", content: "Downloads e pedidos da sua conta Vértice." },
+      { property: "og:description", content: "Área do cliente Vértice." },
       { property: "og:url", content: "/conta" },
       { name: "robots", content: "noindex" },
     ],
@@ -26,10 +24,7 @@ export const Route = createFileRoute("/conta")({
 });
 
 const sections = [
-  { value: "produtos", label: "Meus produtos", icon: FileText },
-  { value: "downloads", label: "Downloads", icon: Download },
-  { value: "pedidos", label: "Pedidos", icon: Receipt },
-  { value: "favoritos", label: "Favoritos", icon: Heart },
+  { value: "compras", label: "Minhas compras", icon: Receipt },
   { value: "dados", label: "Dados", icon: User },
   { value: "suporte", label: "Suporte", icon: LifeBuoy },
 ];
@@ -37,8 +32,6 @@ const sections = [
 function Account() {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
-  const { products } = useProductCatalog();
-  const owned = products.slice(0, 3);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -68,15 +61,14 @@ function Account() {
             </Button>
           </div>
           <p className="mt-8 max-w-md text-sm text-muted-foreground">
-            Bem-vindo(a), {user.displayName || user.email}. Produtos, pedidos e downloads reais
-            aparecem aqui conforme as próximas etapas do backend forem ligadas.
+            Bem-vindo(a), {user.displayName || user.email}.
           </p>
         </div>
       </section>
 
       <section className="band-light">
         <div className="container-editorial py-16 lg:py-24">
-          <Tabs defaultValue="produtos">
+          <Tabs defaultValue="compras">
             <TabsList className="flex h-auto w-full flex-wrap justify-start gap-2 bg-transparent p-0">
               {sections.map((s) => (
                 <TabsTrigger
@@ -90,49 +82,12 @@ function Account() {
               ))}
             </TabsList>
 
-            <TabsContent value="produtos" className="mt-12">
-              <ul className="divide-y divide-border border-y border-border">
-                {owned.map((p) => (
-                  <li key={p.slug} className="flex flex-wrap items-center justify-between gap-6 py-6">
-                    <div>
-                      <p className="label-micro text-accent-foreground">{p.type}</p>
-                      <Link
-                        to="/produtos/$slug"
-                        params={{ slug: p.slug }}
-                        className="link-underline mt-2 inline-block text-lg"
-                      >
-                        {p.name}
-                      </Link>
-                    </div>
-                    <Button variant="hairline">Baixar arquivos</Button>
-                  </li>
-                ))}
-              </ul>
-            </TabsContent>
-
-            <TabsContent value="downloads" className="mt-12">
+            <TabsContent value="compras" className="mt-12 max-w-md">
               <p className="text-sm text-muted-foreground">
-                Cada download é liberado por link temporário, com limite de acessos e registro de
-                auditoria.
+                Suas compras são processadas e entregues pela Kiwify. O acesso aos arquivos e a
+                nota fiscal chegam por e-mail assim que o pagamento é confirmado, e ficam
+                disponíveis também na área de membros da Kiwify.
               </p>
-            </TabsContent>
-
-            <TabsContent value="pedidos" className="mt-12">
-              <ul className="divide-y divide-border border-y border-border text-sm">
-                {owned.map((p, i) => (
-                  <li key={p.slug} className="flex items-center justify-between gap-6 py-5">
-                    <span className="label-micro text-muted-foreground">
-                      Pedido #{1000 + i}
-                    </span>
-                    <span>{p.name}</span>
-                    <span className="font-display text-lg">{brl(p.price)}</span>
-                  </li>
-                ))}
-              </ul>
-            </TabsContent>
-
-            <TabsContent value="favoritos" className="mt-12">
-              <p className="text-sm text-muted-foreground">Nenhum favorito salvo ainda.</p>
             </TabsContent>
 
             <TabsContent value="dados" className="mt-12">

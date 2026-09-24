@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Reveal } from "@/components/site/Reveal";
@@ -9,22 +9,14 @@ import { brl } from "@/lib/catalog";
 import { createOrder, getOrderStatus } from "@/lib/orders.functions";
 import { useProductCatalog } from "@/lib/product-catalog";
 
+// Checkout próprio (Asaas) foi desativado quando as vendas passaram para a Kiwify —
+// esta rota não tem mais nenhum ponto de entrada na UI, mas ficava alcançável por URL
+// direta e por itens salvos no localStorage de antes da mudança, levando a um "Finalizar
+// compra" que nunca entregava o arquivo (não há mais handler de download no site).
 export const Route = createFileRoute("/carrinho")({
-  head: () => ({
-    meta: [
-      { title: "Carrinho e checkout — Vértice" },
-      {
-        name: "description",
-        content:
-          "Revise seus itens, aplique cupom e finalize a compra com acesso imediato aos arquivos.",
-      },
-      { property: "og:title", content: "Carrinho e checkout — Vértice" },
-      { property: "og:description", content: "Checkout direto com entrega digital imediata." },
-      { property: "og:url", content: "/carrinho" },
-      { name: "robots", content: "noindex" },
-    ],
-    links: [{ rel: "canonical", href: "/carrinho" }],
-  }),
+  beforeLoad: () => {
+    throw redirect({ to: "/produtos" });
+  },
   component: CartPage,
 });
 
