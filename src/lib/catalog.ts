@@ -31,6 +31,8 @@ export type Product = {
   image: string;
   featured?: boolean;
   bestSeller?: boolean;
+  /** Link de checkout do produto na Kiwify. Ausente = venda ainda não cadastrada lá. */
+  kiwifyUrl?: string;
 };
 
 export const brl = (v: number) =>

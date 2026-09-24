@@ -1,6 +1,6 @@
 # Vértice Business Tools — Roadmap & Backlog
 
-Legenda de status: ✅ concluído · 🔶 parcial/infra pronta · ⬜ não iniciado
+Legenda de status: ✅ concluído · 🔶 parcial/infra pronta · ⬜ não iniciado · 🔄 substituído por decisão de produto
 Legenda de prioridade: **P0** crítico · **P1** alto · **P2** médio · **P3** desejável
 Estimativa em pontos (1 = ~meio dia).
 
@@ -8,6 +8,17 @@ Estimativa em pontos (1 = ~meio dia).
 > Postgres/RLS) e migrou para **Firebase** (Auth, Firestore, Storage). Os itens de Fase 1
 > abaixo foram reescritos para refletir isso — regras em `firestore.rules`, tipos em
 > `src/lib/firestore-schema.ts`, wiring em `src/lib/firebase.ts` / `firebase-admin.ts`.
+
+> **Nota de decisão de produto (2026-09-19):** por causa do tempo que a Fase 2 (checkout
+> Asaas próprio + entrega via Storage) estava levando para ficar pronta ponta a ponta, o
+> checkout e a entrega dos produtos passam a ser feitos pela **Kiwify**; o site vira
+> vitrine/landing page. O carrinho e a integração Asaas continuam no repositório
+> (`src/lib/cart.tsx`, `src/lib/asaas.server.ts`, `src/routes/api.webhooks.asaas.ts`),
+> só desativados da navegação — decisão explícita de não remover ainda, pra poder reverter
+> fácil. `Product.kiwifyUrl` (novo campo) e os botões de compra em `produtos.$slug.tsx` já
+> estão prontos para o link de checkout da Kiwify (ver Fase 2B). Isso torna boa parte da
+> Fase 2, e o histórico de pedidos de Fase 3/5, não-prioritários por ora — marcados 🔄
+> abaixo, sem apagar o que já foi feito.
 
 ---
 
@@ -49,29 +60,37 @@ Estimativa em pontos (1 = ~meio dia).
 | # | Issue | Status | Prioridade | Est. | Nota |
 |---|---|---|---|---|---|
 | PC-01 | Checklist de Abertura de Empresa — conteúdo real do produto gratuito | 🔶 | P0 | 2 | Arquivos criados: `deliverables/checklist-abertura-de-empresa.xlsx` (editável, com painel de progresso) e `.pdf` (interativo, 48 checkboxes reais). Falta revisão por contador/advogado e ligar à entrega (depende de V-403) |
-| PC-02 | Criar os arquivos reais dos produtos pagos do catálogo atual (12 itens: planilhas, e-books, kits, templates) | 🔶 | P0 | 13 | 1ª onda entregue: `deliverables/planilha-fluxo-de-caixa-empresarial.xlsx` (5 abas, fórmulas reais) + `.pdf` (manual de implantação, 14 páginas). Faltam 11 produtos |
+| PC-02 | Criar os arquivos reais dos produtos pagos do catálogo atual (12 itens: planilhas, e-books, kits, templates) | 🔶 | P0 | 13 | 2ª onda entregue: `deliverables/planilha-dre-gerencial.xlsx` (Receitas por canal, 5 grupos de despesa com fornecedores reais, DRE Macro mês a mês com margem de contribuição/EBITDA/ponto de equilíbrio, Dashboard com 3 gráficos) + macros VBA opcionais em `.md` separado. 1ª onda: `planilha-fluxo-de-caixa-empresarial.xlsx` + `.pdf`. Faltam 10 produtos. **Atenção:** o spec "Períodos: 24 meses" da Planilha de DRE Gerencial no catálogo não bate com o arquivo entregue (12 meses) — corrigir o campo no Firestore. |
 | PC-03 | Padronizar o pipeline de criação (briefing → conteúdo/fórmulas → design → revisão → upload) | ⬜ | P1 | 2 | Esboçado no ClickUp; falta formalizar os status/checklist por etapa |
 | PC-04 | Convenção de nomenclatura e organização dos arquivos-fonte antes do upload em Storage | ⬜ | P1 | 1 | Precisa bater com o path `/deliverables/{slug}/...` usado em `storage.rules` (V-203) |
 | PC-05 | Priorizar e desenvolver as próximas ideias do backlog (Estante do CEO/CFO, novos e-books/templates) | ⬜ | P2 | — | Backlog vivo no ClickUp (tarefa "Ideias"), sem prazo fixo |
 
-## Fase 2 — Pagamento e Entrega Digital (P0)
+## Fase 2 — Pagamento e Entrega Digital própria (🔄 substituída pela Kiwify, ver Fase 2B)
 
 | # | Issue | Status | Prioridade | Est. | Nota |
 |---|---|---|---|---|---|
-| V-201 | Integração de pagamento (checkout, Pix/cartão/boleto) | 🔶 | P0 | 5 | **Implementado com Asaas**: `src/lib/asaas.server.ts` (cliente server-only) + `createOrder` em `src/lib/orders.functions.ts` cria cliente/cobrança real (Pix, boleto ou cartão) e a UI de checkout (`carrinho.tsx`) coleta os dados e mostra QR Pix / link do boleto / resultado do cartão. Falta configurar `ASAAS_API_KEY`/`ASAAS_ENV`/`ASAAS_WEBHOOK_TOKEN` na Vercel (produção) e testar com uma cobrança real. |
-| V-202 | Webhook de confirmação → criar pedido e liberar acesso | 🔶 | P0 | 3 | **Implementado**: `src/routes/api.webhooks.asaas.ts` recebe os eventos de pagamento e atualiza o status do pedido no Firestore. Webhook **já cadastrado na Asaas via API** (`https://www.verticebooks.com.br/api/webhooks/asaas`, id `131fcdd0-495c-49e8-ba48-751350a50a74`). Falta configurar as env vars na Vercel e testar um evento real — e ligar a liberação de acesso de fato (depende de V-203). |
-| V-203 | Storage privado dos arquivos + links assinados temporários | ⬜ | P0 | 3 | Pedido pago (grátis ou via Asaas) ainda não gera nenhum `downloads/{grantId}` — a tela "Ir para downloads" não tem o que mostrar até isso existir. |
-| V-204 | Limite de downloads por pedido e log de auditoria | ⬜ | P1 | 2 | |
-| V-205 | E-mail transacional: confirmação de compra + acesso | ⬜ | P0 | 2 | |
-| V-206 | Emissão/registro fiscal e recibo em PDF | ⬜ | P2 | 3 | |
-| V-207 | Cupons reais no banco (validade, uso único, % ou fixo) | ⬜ | P1 | 2 | |
+| V-201 | Integração de pagamento (checkout, Pix/cartão/boleto) | 🔄 | — | 5 | **Substituído pela Kiwify (2026-09-19)**. Ficou implementado com Asaas (`src/lib/asaas.server.ts` + `createOrder` em `orders.functions.ts`, UI em `carrinho.tsx`), mas nunca chegou a rodar uma cobrança real em produção. Código mantido, desligado da navegação. |
+| V-202 | Webhook de confirmação → criar pedido e liberar acesso | 🔄 | — | 3 | **Substituído pela Kiwify (2026-09-19)**. `src/routes/api.webhooks.asaas.ts` existe e o webhook chegou a ser cadastrado na Asaas (id `131fcdd0-495c-49e8-ba48-751350a50a74`), mas não foi testado com evento real nem ligado à liberação de acesso. |
+| V-203 | Storage privado dos arquivos + links assinados temporários | 🔄 | — | 3 | **Substituído pela Kiwify (2026-09-19)** — é ela quem hospeda e libera o arquivo comprado agora. |
+| V-204 | Limite de downloads por pedido e log de auditoria | 🔄 | — | 2 | Feito pela Kiwify. |
+| V-205 | E-mail transacional: confirmação de compra + acesso | 🔄 | — | 2 | Feito pela Kiwify. |
+| V-206 | Emissão/registro fiscal e recibo em PDF | 🔄 | — | 3 | Feito pela Kiwify. |
+| V-207 | Cupons reais no banco (validade, uso único, % ou fixo) | 🔄 | — | 2 | A Kiwify tem cupom próprio; carrinho/cupom do site ficam desativados junto com o resto do checkout. |
+
+## Fase 2B — Vender via Kiwify (P0, decisão 2026-09-19)
+
+| # | Issue | Status | Prioridade | Est. | Nota |
+|---|---|---|---|---|---|
+| K-001 | Cadastrar cada produto na Kiwify (nome, preço, descrição, arquivo de entrega) | ⬜ | P0 | — | Bloqueado por `PC-02`: a Kiwify também precisa do arquivo real pra vender, não só o site. Pode ser feito aos poucos, um produto por vez, assim que o arquivo dele ficar pronto. |
+| K-002 | Colar o link de checkout de cada produto no campo `Product.kiwifyUrl` (Firestore) | ⬜ | P0 | 1 | Código já pronto (PR #5): sem o link, o botão mostra "Em breve"; com o link, vira "Comprar na Kiwify" sozinho. Atualização manual pelo Firebase Console, produto a produto, conforme forem sendo cadastrados na Kiwify. |
+| K-003 | Webhook Kiwify → Firestore, só para registro interno de vendas (opcional) | ⬜ | P3 | 2 | Não bloqueia a venda — a Kiwify já entrega tudo sozinha. Só faria sentido se quiser ver vendas dentro do próprio painel/admin do site no futuro. |
 
 ## Fase 3 — Experiência do Cliente (P1)
 
 | # | Issue | Status | Prioridade | Est. | Nota |
 |---|---|---|---|---|---|
-| V-301 | "Meus produtos" e "Downloads" com dados reais | ⬜ | P1 | 2 | `conta.tsx` hoje mostra `products.slice(0,3)` mockado |
-| V-302 | Histórico de pedidos com status e reenvio de acesso | ⬜ | P1 | 2 | |
+| V-301 | "Meus produtos" e "Downloads" com dados reais | 🔄 | — | 2 | **Deprioritizado (2026-09-19)** — a área de membros da Kiwify já cobre isso. `conta.tsx` continua com `products.slice(0,3)` mockado; revisitar só se quiser unificar a experiência no site futuramente. |
+| V-302 | Histórico de pedidos com status e reenvio de acesso | 🔄 | — | 2 | **Deprioritizado (2026-09-19)** — histórico de compra fica na Kiwify por enquanto. |
 | V-303 | Favoritos persistidos por usuário | ⬜ | P2 | 1 | |
 | V-304 | Edição de dados, senha e preferências de comunicação | ⬜ | P2 | 2 | |
 | V-305 | Central de suporte com ticket por pedido | ⬜ | P2 | 3 | |
@@ -95,7 +114,7 @@ Estimativa em pontos (1 = ~meio dia).
 | # | Issue | Status | Prioridade | Est. |
 |---|---|---|---|---|
 | V-501 | Painel admin: CRUD de produtos e upload de arquivos | ⬜ | P1 | 5 |
-| V-502 | Gestão de pedidos, reembolsos e revogação de acesso | ⬜ | P1 | 3 |
+| V-502 | Gestão de pedidos, reembolsos e revogação de acesso — 🔄 deprioritizado (2026-09-19): painel já existe na Kiwify | 🔄 | — | 3 |
 | V-503 | Gestão de cupons e campanhas | ⬜ | P2 | 2 |
 | V-504 | Dashboard de vendas (receita, ticket médio, top produtos) | ⬜ | P2 | 3 |
 | V-505 | Exportação CSV de pedidos e clientes | ⬜ | P3 | 1 |
@@ -126,20 +145,19 @@ Estimativa em pontos (1 = ~meio dia).
 
 ## Marcos
 
-1. **MVP comercial** — Fases 1, 1B e 2 (venda e entrega ponta a ponta, com produto real por trás). *Fase 1 está com 6 de 7 itens prontos (falta fechar `orders`/`downloads` server-side em V-102); Fase 1B (criação dos produtos) e Fase 2 (pagamento) não iniciadas — são os dois maiores blocos de trabalho restantes, e podem correr em paralelo (conteúdo não depende de checkout, e vice-versa).*
-2. **Loja completa** — Fases 3, 4 e 5.
+1. **MVP comercial via Kiwify** — Fase 1B (conteúdo real dos produtos) + Fase 2B (cadastro na Kiwify + `kiwifyUrl`). *Esse é o caminho crítico atual: o site (Fase 0/1) já está pronto como vitrine; o que falta é ter arquivo de entrega real produto a produto e cadastrá-lo na Kiwify — os dois podem andar juntos, produto por produto, sem esperar os 12 ficarem prontos de uma vez.*
+2. **Loja completa** — Fases 3, 4 e 5 (o que não foi deprioritizado pela Kiwify).
 3. **Escala** — Fases 6 e 7.
+4. *(Arquivada por ora)* Checkout e entrega própria (Fase 2 original) — fica no repositório, desativada, caso um dia valha a pena voltar a ter isso no site em vez da Kiwify.
 
-## Sequência recomendada (atualizada — 2026-09-12)
+## Sequência recomendada (atualizada — 2026-09-19, pivot para Kiwify)
 
-1. ~~`V-106` — script/função admin para conceder `role: admin` via custom claim.~~ ✅ feito (`scripts/set-admin-role.mjs`).
-2. ~~`V-401` — trocar leitura de `journal` estático por Firestore.~~ ✅ feito (home e `/insights` agora buscam de `posts`).
-3. ~~`V-103` — migrar o catálogo de produtos (`catalog.ts`) para Firestore.~~ ✅ feito — `src/lib/products.ts` (fetch + cache) e `src/lib/product-catalog.tsx` (contexto de catálogo, populado pelo loader do `__root.tsx`) substituem o array estático em `cart.tsx`, `conta.tsx`, `carrinho.tsx`, `produtos.*`, `insights.*`, `LeadCapture`, `Footer` e `sitemap.xml`. Catálogo semeado via `bun run seed:catalog`; fluxo carrinho/bundle/cupom testado ponta a ponta.
-4. ~~`V-102` (parte 1) — writer server-side real para `orders`.~~ ✅ feito — `src/lib/orders.functions.ts` (server function autenticada, revalida preço no Firestore, nunca confia no cliente). Carrinho 100% gratuito finaliza de verdade e grava pedido; carrinho com item pago é bloqueado com aviso claro, já que não existe gateway de pagamento ainda. `downloads` fica para quando V-203 (storage) existir — apontar para um arquivo que não existe seria só encenação.
-5. `PC-01` — conteúdo real do Checklist de Abertura de Empresa (o produto gratuito). Prioridade máxima em conteúdo: é a isca que já está ativa no site sem nada pra entregar.
-6. ~~`V-201` e `V-202` — checkout Asaas (Pix/boleto/cartão) + webhook de confirmação.~~ 🔶 implementado e webhook já cadastrado na Asaas via API — falta só configurar `ASAAS_API_KEY`/`ASAAS_ENV`/`ASAAS_WEBHOOK_TOKEN` na Vercel e testar com uma cobrança real. `V-203` (storage) e `V-205` (e-mail) continuam não iniciados — sem eles o pedido é confirmado mas não entrega nada.
-7. `PC-02` — criar os arquivos reais dos 12 produtos pagos do catálogo, em ondas por categoria. Sem isso, `V-203` não tem nada de real para servir.
-8. `V-207` — cupons reais (hoje o carrinho já suporta cupom, mas não valida contra o banco).
-9. `V-606` — revisão de segurança antes de abrir pagamentos de verdade.
-10. `V-301` — "Meus produtos"/"Downloads" com dados reais assim que houver pedidos de verdade.
-11. `V-501` — painel admin (CRUD de produtos, gestão de pedidos) — agora desbloqueado por V-106.
+1. ~~`V-106`, `V-401`, `V-103`, `V-102` (parte 1)~~ ✅ feitos — ver notas nas fases acima.
+2. ~~Mockups únicos por produto (12 capas editoriais)~~ ✅ feito (PR #5).
+3. ~~Preparar o site para vender via Kiwify (`kiwifyUrl`, botões, carrinho/Asaas desativados do menu)~~ ✅ feito (PR #5) — falta só o dado, não código.
+4. **`PC-02` — criar os arquivos reais dos 10 produtos pagos que ainda faltam.** Agora é o item que bloqueia tanto o site quanto a Kiwify diretamente; prioridade máxima do projeto.
+5. **`K-001`/`K-002` — cadastrar cada produto na Kiwify assim que o arquivo dele ficar pronto, e colar o link de checkout no Firestore.** Pode ser feito produto a produto, em paralelo com o item 4 (não precisa esperar todos os 11).
+6. `PC-01` — fechar a revisão por contador/advogado do Checklist gratuito.
+7. `V-606` — revisão de segurança das regras Firestore/Storage (ainda vale, independente da Kiwify).
+8. `V-501` — painel admin de produtos (CRUD, upload) — útil mesmo com a Kiwify cuidando do pagamento, pra não depender de editar Firestore na mão.
+9. Reavaliar depois do MVP: `V-201`–`V-207` (retomar checkout próprio, se um dia fizer sentido tirar a taxa da Kiwify) e `V-301`/`V-302`/`V-502` (unificar histórico de pedidos no site).
