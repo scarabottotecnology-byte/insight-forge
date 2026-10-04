@@ -7,6 +7,7 @@ import { Parallax } from "@/components/site/Parallax";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal } from "@/components/site/Reveal";
 import { ScrollProgress } from "@/components/site/ScrollProgress";
+import { Shelf } from "@/components/site/Shelf";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -15,7 +16,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { brl } from "@/lib/catalog";
+import { brl, type Product } from "@/lib/catalog";
 import { db } from "@/lib/firebase";
 import { useProductCatalog } from "@/lib/product-catalog";
 import type { Post } from "@/lib/firestore-schema";
@@ -99,6 +100,15 @@ function Home() {
   const featured = (products.find((p) => p.slug === "dashboard-financeiro-gerencial") ?? products[0])!;
   const kits = products.filter((p) => p.type === "Kit");
   const free = products.filter((p) => p.price === 0);
+  const shelfOrder = [
+    "planilha-fluxo-de-caixa-empresarial",
+    "planilha-dre-gerencial",
+    "dashboard-financeiro-gerencial",
+    "modelo-de-planejamento-estrategico",
+    "modelo-de-business-plan",
+    "kit-financeiro-empresarial",
+  ];
+  const shelf = shelfOrder.map((slug) => products.find((p) => p.slug === slug)).filter((p): p is Product => Boolean(p));
 
   return (
     <>
@@ -277,6 +287,23 @@ function Home() {
         </div>
       </section>
 
+      {/* ESTANTE EXECUTIVA */}
+      <section className="band-light border-t border-border">
+        <div className="container-editorial py-24 lg:py-32">
+          <Reveal>
+            <p className="label-micro text-accent-foreground">03 — Estante executiva</p>
+            <h2 className="display-section mt-6 max-w-2xl">O que fica à mão de quem decide</h2>
+            <p className="mt-6 max-w-md text-sm leading-relaxed text-muted-foreground">
+              Da leitura diária de caixa até o plano que vai para o banco — na ordem em que cada
+              ferramenta costuma entrar na rotina. Passe o mouse para puxar um título.
+            </p>
+          </Reveal>
+          <Reveal delay={100} className="mt-16">
+            <Shelf products={shelf} />
+          </Reveal>
+        </div>
+      </section>
+
       {/* EDITORIAL FEATURE */}
       <section className="band-light border-y border-border">
         <div className="container-editorial grid items-center gap-16 py-24 lg:grid-cols-2 lg:py-32">
@@ -291,7 +318,7 @@ function Home() {
             />
           </Reveal>
           <Reveal delay={100}>
-            <p className="label-micro text-accent-foreground">03 — Destaque editorial</p>
+            <p className="label-micro text-accent-foreground">04 — Destaque editorial</p>
             <h2 className="display-section mt-6">{featured.name}</h2>
             <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground">
               {featured.solution}
@@ -320,7 +347,7 @@ function Home() {
       <section className="band-dark">
         <div className="container-editorial py-24 lg:py-32">
           <Reveal>
-            <p className="label-micro text-primary">04 — Soluções</p>
+            <p className="label-micro text-primary">05 — Soluções</p>
             <h2 className="display-section mt-6 max-w-2xl">
               Kits para resolver um problema inteiro, não um pedaço
             </h2>
@@ -340,7 +367,7 @@ function Home() {
         <div className="container-editorial py-24 lg:py-32">
           <Reveal className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <p className="label-micro text-accent-foreground">05 — Insights</p>
+              <p className="label-micro text-accent-foreground">06 — Insights</p>
               <h2 className="display-section mt-6 max-w-xl">Conteúdo que antecede a ferramenta</h2>
             </div>
             <Link to="/insights" className="label-micro link-underline">
@@ -380,7 +407,7 @@ function Home() {
       <section className="band-dark border-t border-border">
         <div className="container-editorial grid gap-16 py-24 lg:grid-cols-2 lg:py-32">
           <Reveal>
-            <p className="label-micro text-primary">06 — Recursos gratuitos</p>
+            <p className="label-micro text-primary">07 — Recursos gratuitos</p>
             <h2 className="display-section mt-6">Comece sem custo</h2>
             <div className="mt-10 space-y-px">
               {free.map((p) => (
