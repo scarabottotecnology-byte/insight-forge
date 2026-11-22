@@ -60,37 +60,33 @@ Estimativa em pontos (1 = ~meio dia).
 | # | Issue | Status | Prioridade | Est. | Nota |
 |---|---|---|---|---|---|
 | PC-01 | Checklist de Abertura de Empresa — conteúdo real do produto gratuito | 🔶 | P0 | 2 | Arquivos criados: `deliverables/checklist-abertura-de-empresa.xlsx` (editável, com painel de progresso) e `.pdf` (interativo, 48 checkboxes reais). Falta revisão por contador/advogado e ligar à entrega (depende de V-403) |
-| PC-02 | Criar os arquivos reais dos produtos pagos do catálogo atual (12 itens: planilhas, e-books, kits, templates) | ✅ | P0 | 13 | **Concluído — os 12 produtos do catálogo têm conteúdo real em `deliverables/`.** Planilha de Precificação, Dashboard Financeiro Gerencial (4 painéis + 32 indicadores), Plano de Negócios Enxuto, Modelo de Planejamento Estratégico (docx+xlsx+pptx), Modelo de Business Plan (docx+xlsx+pptx, modelo financeiro de 5 anos por fórmula), Planilha de Orçamento Empresarial (com formatação condicional), e-book Gestão Financeira na Prática (pdf+epub+planilha de exemplos). Kit Financeiro Empresarial e Kit de Gestão Empresarial ganharam seus manuais de implantação/rotina de reuniões. **Atenção:** o spec "Períodos: 24 meses" da Planilha de DRE Gerencial no catálogo não bate com o arquivo entregue (12 meses), e o spec "118 páginas" do e-book não bate com o livro entregue (~28 páginas, 12 capítulos completos) — corrigir os dois campos no Firestore. |
+| PC-02 | Criar os arquivos reais dos produtos pagos do catálogo atual (12 itens: planilhas, e-books, kits, templates) | ✅ | P0 | 13 | **Concluído — os 12 produtos do catálogo têm conteúdo real em `deliverables/`.** Planilha de Precificação, Dashboard Financeiro Gerencial (4 painéis + 32 indicadores), Plano de Negócios Enxuto, Modelo de Planejamento Estratégico (docx+xlsx+pptx), Modelo de Business Plan (docx+xlsx+pptx, modelo financeiro de 5 anos por fórmula), Planilha de Orçamento Empresarial (com formatação condicional), e-book Gestão Financeira na Prática (pdf+epub+planilha de exemplos). Kit Financeiro Empresarial e Kit de Gestão Empresarial ganharam seus manuais de implantação/rotina de reuniões. Specs do catálogo corrigidos no Firestore em 2026-11-22 (DRE: 12 meses; e-book: 28 páginas). |
 | PC-03 | Padronizar o pipeline de criação (briefing → conteúdo/fórmulas → design → revisão → upload) | ⬜ | P1 | 2 | Esboçado no ClickUp; falta formalizar os status/checklist por etapa |
 | PC-04 | Convenção de nomenclatura e organização dos arquivos-fonte antes do upload em Storage | ⬜ | P1 | 1 | Precisa bater com o path `/deliverables/{slug}/...` usado em `storage.rules` (V-203) |
 | PC-05 | Priorizar e desenvolver as próximas ideias do backlog (Estante do CEO/CFO, novos e-books/templates) | ⬜ | P2 | — | Backlog vivo no ClickUp (tarefa "Ideias"), sem prazo fixo |
 
-## Fase 2 — Pagamento e Entrega Digital própria (🔄 substituída pela Kiwify, ver Fase 2B)
+## Fase 2 — Pagamento e Entrega Digital própria (✅ reativada em 2026-11-22: a venda é no próprio site)
 
 | # | Issue | Status | Prioridade | Est. | Nota |
 |---|---|---|---|---|---|
-| V-201 | Integração de pagamento (checkout, Pix/cartão/boleto) | 🔄 | — | 5 | **Substituído pela Kiwify (2026-09-19)**. Ficou implementado com Asaas (`src/lib/asaas.server.ts` + `createOrder` em `orders.functions.ts`, UI em `carrinho.tsx`), mas nunca chegou a rodar uma cobrança real em produção. Código mantido, desligado da navegação. |
-| V-202 | Webhook de confirmação → criar pedido e liberar acesso | 🔄 | — | 3 | **Substituído pela Kiwify (2026-09-19)**. `src/routes/api.webhooks.asaas.ts` existe e o webhook chegou a ser cadastrado na Asaas (id `131fcdd0-495c-49e8-ba48-751350a50a74`), mas não foi testado com evento real nem ligado à liberação de acesso. |
-| V-203 | Storage privado dos arquivos + links assinados temporários | 🔄 | — | 3 | **Substituído pela Kiwify (2026-09-19)** — é ela quem hospeda e libera o arquivo comprado agora. |
-| V-204 | Limite de downloads por pedido e log de auditoria | 🔄 | — | 2 | Feito pela Kiwify. |
-| V-205 | E-mail transacional: confirmação de compra + acesso | 🔄 | — | 2 | Feito pela Kiwify. |
-| V-206 | Emissão/registro fiscal e recibo em PDF | 🔄 | — | 3 | Feito pela Kiwify. |
-| V-207 | Cupons reais no banco (validade, uso único, % ou fixo) | 🔄 | — | 2 | A Kiwify tem cupom próprio; carrinho/cupom do site ficam desativados junto com o resto do checkout. |
+| V-201 | Integração de pagamento (checkout, Pix/cartão/boleto) | ✅ | P0 | 5 | Checkout próprio reativado (decisão 2026-11-22, Kiwify abandonada). Asaas: Pix (QR code na própria loja), boleto e cartão. O cartão é pago na página segura do Asaas (`invoiceUrl`), então dado de cartão nunca passa pelo nosso servidor. Falta a 1ª cobrança real em produção. |
+| V-202 | Webhook de confirmação → criar pedido e liberar acesso | ✅ | P0 | 3 | `api.webhooks.asaas.ts` marca o pedido como `paid`; o acesso é calculado a partir dos pedidos pagos. Testado com o token real (401 sem token, 200 com). Cadastrado no Asaas para `https://www.verticebooks.com.br/api/webhooks/asaas`. |
+| V-203 | Entrega segura dos arquivos | ✅ | P0 | 3 | Sem Firebase Storage (exigiria plano Blaze): os arquivos de `deliverables/` são embutidos só no bundle do servidor (`scripts/vite-plugin-deliverables.ts`) e entregues por `library.functions.ts` apenas para quem tem pedido pago do produto. Mapa produto → arquivos em `src/lib/deliverables.server.ts`. **O repositório precisa ser privado**, senão os arquivos ficam públicos no GitHub. |
+| V-204 | Limite de downloads por pedido e log de auditoria | ⬜ | P2 | 2 | Hoje o download é ilimitado para quem comprou. |
+| V-205 | E-mail transacional: confirmação de compra + acesso | ⬜ | P1 | 2 | O Asaas já envia o recibo de pagamento; falta um e-mail da loja avisando que os arquivos estão em Minha conta. |
+| V-206 | Emissão/registro fiscal e recibo em PDF | ⬜ | P1 | 3 | Avaliar a emissão de nota fiscal de serviço pelo Asaas. |
+| V-207 | Cupons reais no banco (validade, uso único, % ou fixo) | ⬜ | P2 | 2 | Hoje só existe o cupom fixo `VERTICE10` no código. |
 
-## Fase 2B — Vender via Kiwify (P0, decisão 2026-09-19)
+## Fase 2B — Vender via Kiwify (❌ descartada em 2026-11-22)
 
-| # | Issue | Status | Prioridade | Est. | Nota |
-|---|---|---|---|---|---|
-| K-001 | Cadastrar cada produto na Kiwify (nome, preço, descrição, arquivo de entrega) | ⬜ | P0 | — | Bloqueado por `PC-02`: a Kiwify também precisa do arquivo real pra vender, não só o site. Pode ser feito aos poucos, um produto por vez, assim que o arquivo dele ficar pronto. |
-| K-002 | Colar o link de checkout de cada produto no campo `Product.kiwifyUrl` (Firestore) | ⬜ | P0 | 1 | Código já pronto (PR #5): sem o link, o botão mostra "Em breve"; com o link, vira "Comprar na Kiwify" sozinho. Atualização manual pelo Firebase Console, produto a produto, conforme forem sendo cadastrados na Kiwify. |
-| K-003 | Webhook Kiwify → Firestore, só para registro interno de vendas (opcional) | ⬜ | P3 | 2 | Não bloqueia a venda — a Kiwify já entrega tudo sozinha. Só faria sentido se quiser ver vendas dentro do próprio painel/admin do site no futuro. |
+A venda passou a ser feita no checkout do próprio site (Fase 2). O campo `kiwifyUrl` foi removido do código e do Firestore.
 
 ## Fase 3 — Experiência do Cliente (P1)
 
 | # | Issue | Status | Prioridade | Est. | Nota |
 |---|---|---|---|---|---|
-| V-301 | "Meus produtos" e "Downloads" com dados reais | 🔄 | — | 2 | **Deprioritizado (2026-09-19)** — a área de membros da Kiwify já cobre isso. `conta.tsx` continua com `products.slice(0,3)` mockado; revisitar só se quiser unificar a experiência no site futuramente. |
-| V-302 | Histórico de pedidos com status e reenvio de acesso | 🔄 | — | 2 | **Deprioritizado (2026-09-19)** — histórico de compra fica na Kiwify por enquanto. |
+| V-301 | "Meus produtos" e "Downloads" com dados reais | ✅ | P0 | 2 | `conta.tsx` → Minhas compras: produtos pagos com download de cada arquivo, pedidos aguardando pagamento (com link para pagar) e histórico. |
+| V-302 | Histórico de pedidos com status e reenvio de acesso | ✅ | P1 | 2 | Histórico em Minha conta; o acesso é permanente enquanto o pedido estiver pago. |
 | V-303 | Favoritos persistidos por usuário | ⬜ | P2 | 1 | |
 | V-304 | Edição de dados, senha e preferências de comunicação | ⬜ | P2 | 2 | |
 | V-305 | Central de suporte com ticket por pedido | ⬜ | P2 | 3 | |

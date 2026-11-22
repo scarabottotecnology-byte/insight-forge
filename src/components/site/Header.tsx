@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, Search, User } from "lucide-react";
+import { Menu, Search, ShoppingBag, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useCart } from "@/lib/cart";
 import { cn } from "@/lib/utils";
 
 const nav = [
@@ -14,6 +15,7 @@ const nav = [
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const { count } = useCart();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -63,6 +65,18 @@ export function Header() {
             className="hidden text-paper-warm/70 transition-colors hover:text-primary sm:block"
           >
             <User className="h-4 w-4" />
+          </Link>
+          <Link
+            to="/carrinho"
+            aria-label={`Carrinho, ${count} ${count === 1 ? "item" : "itens"}`}
+            className="relative text-paper-warm/70 transition-colors hover:text-primary"
+          >
+            <ShoppingBag className="h-4 w-4" />
+            {count > 0 && (
+              <span className="label-micro absolute -top-2 -right-2 flex h-4 min-w-4 items-center justify-center bg-champagne px-1 text-[0.5rem] text-ink">
+                {count}
+              </span>
+            )}
           </Link>
           <Sheet>
             <SheetTrigger
