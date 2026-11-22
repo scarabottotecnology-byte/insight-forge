@@ -1,7 +1,7 @@
 // Updates the `image` field of each product document in Firestore to point at
-// its new, unique cover under public/images/products/{slug}.jpg — replacing the
-// old shared mockup-kit.jpg / mockup-dashboard.jpg / mockup-ebook.jpg reused
-// across unrelated products. Also updates `badge` for the 3 products whose new
+// its image under public/images/products/{slug}.jpg — generated from the real
+// product files by scripts/generate-product-images.py — replacing the old shared
+// mockup-kit.jpg / mockup-dashboard.jpg / mockup-ebook.jpg. Also updates `badge` for the 3 products whose new
 // cover text was aligned with the catalog during review (see PR description).
 //
 // Usage:
@@ -10,6 +10,10 @@
 // Requires FIREBASE_SERVICE_ACCOUNT in the environment (see .env.example).
 import { cert, initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
+
+// Bump when the images are regenerated (scripts/generate-product-images.py), so browsers
+// and the CDN fetch the new files instead of a cached copy of the old ones.
+const IMAGE_VERSION = "2026-11-22";
 
 const PRODUCTS = [
   { slug: "planilha-fluxo-de-caixa-empresarial" },
@@ -35,7 +39,7 @@ async function main() {
   const batch = db.batch();
   for (const { slug, badge } of PRODUCTS) {
     const ref = db.collection("products").doc(slug);
-    const data = { image: `/images/products/${slug}.jpg`, updatedAt: now };
+    const data = { image: `/images/products/${slug}.jpg?v=${IMAGE_VERSION}`, updatedAt: now };
     if (badge) data.badge = badge;
     batch.update(ref, data);
   }
