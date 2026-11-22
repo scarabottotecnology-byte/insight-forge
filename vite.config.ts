@@ -12,10 +12,13 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  // Hard-pin Vercel as the deploy target instead of relying on Nitro's
-  // cloudflare-module fallback (which local builds hit with no platform env vars set).
+  // Pin the deploy target instead of relying on Nitro's cloudflare-module fallback
+  // (which local builds hit with no platform env vars set):
+  //   - on Vercel (VERCEL=1 during its builds) → "vercel" output (.vercel/output)
+  //   - everywhere else, including Hostinger Node.js hosting → "node-server"
+  //     (.output/server/index.mjs, started with `node .output/server/index.mjs`)
   nitro: {
-    preset: "vercel",
+    preset: process.env["VERCEL"] ? "vercel" : "node-server",
     // google-gax (a firebase-admin/@google-cloud/firestore dependency) locates its .proto
     // files at runtime via `path.join(__dirname, ...)`. Bundling it into one flat ESM chunk
     // both breaks that __dirname reference ("ReferenceError: __dirname is not defined in ES
