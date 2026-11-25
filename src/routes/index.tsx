@@ -9,6 +9,7 @@ import { Reveal } from "@/components/site/Reveal";
 import { ScrollProgress } from "@/components/site/ScrollProgress";
 import { Shelf } from "@/components/site/Shelf";
 import { LaunchCarousel } from "@/components/site/LaunchCarousel";
+import { CollectionShelf } from "@/components/site/CollectionShelf";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -171,6 +172,9 @@ function Home() {
           </Reveal>
         </div>
       </section>
+
+      {/* COLEÇÃO: ESTANTE DO EMPRESÁRIO */}
+      <CollectionShelf />
 
       {/* DESTAQUE: PARCEIROS */}
       <section className="band-dark border-b border-border">
