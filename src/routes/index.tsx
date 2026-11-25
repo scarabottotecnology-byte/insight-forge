@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal } from "@/components/site/Reveal";
 import { ScrollProgress } from "@/components/site/ScrollProgress";
 import { Shelf } from "@/components/site/Shelf";
+import { LaunchCarousel } from "@/components/site/LaunchCarousel";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -113,9 +114,12 @@ function Home() {
   return (
     <>
       <ScrollProgress />
+      {/* LANÇAMENTOS */}
+      <LaunchCarousel />
+
       {/* HERO */}
       <section className="band-dark relative overflow-hidden">
-        <div className="container-editorial grid min-h-[86svh] items-center gap-16 pt-36 pb-24 lg:grid-cols-[1.05fr_0.95fr] lg:pt-40">
+        <div className="container-editorial grid min-h-[86svh] items-center gap-16 pt-20 pb-24 lg:grid-cols-[1.05fr_0.95fr] lg:pt-24">
           <div>
             <Reveal>
               <p className="label-micro text-primary">Boutique digital de ferramentas profissionais</p>
