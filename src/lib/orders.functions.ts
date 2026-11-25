@@ -12,23 +12,12 @@ const payerSchema = z.object({
   phone: z.string().min(10, "Informe um telefone com DDD."),
 });
 
-const creditCardSchema = z.object({
-  holderName: z.string().min(3),
-  number: z.string().min(13),
-  expiryMonth: z.string().min(1).max(2),
-  expiryYear: z.string().min(2).max(4),
-  ccv: z.string().min(3).max(4),
-  postalCode: z.string().min(8),
-  addressNumber: z.string().min(1),
-});
-
 const inputSchema = z.object({
   idToken: z.string().min(1),
   items: z.array(z.object({ slug: z.string().min(1), qty: z.number().int().positive() })).min(1),
   couponCode: z.string().optional(),
   paymentMethod: z.enum(["PIX", "BOLETO", "CREDIT_CARD"]).optional(),
   payer: payerSchema.optional(),
-  creditCard: creditCardSchema.optional(),
 });
 
 // Mirrors the client-side check in carrinho.tsx until V-207 backs coupons with a real
@@ -49,9 +38,9 @@ function tomorrowIso() {
  * the client's cart data is only ever used for which slugs/quantities were requested.
  *
  * Zero-total carts (the free checklist) are written as "paid" immediately. Paid carts
- * go through Asaas: PIX/Boleto come back "pending" until the webhook
- * (src/routes/api.webhooks.asaas.ts) confirms payment; credit card is confirmed (or
- * declined) synchronously by Asaas at creation time.
+ * go through Asaas and come back "pending" until the webhook
+ * (src/routes/api.webhooks.asaas.ts) confirms payment. Card payments are completed on
+ * Asaas's own payment page (invoiceUrl), so card data never touches this server.
  */
 export const createOrder = createServerFn({ method: "POST" })
   .validator(inputSchema)
@@ -103,9 +92,6 @@ export const createOrder = createServerFn({ method: "POST" })
     if (!data.paymentMethod || !data.payer) {
       throw new Error("Selecione uma forma de pagamento e informe seus dados para continuar.");
     }
-    if (data.paymentMethod === "CREDIT_CARD" && !data.creditCard) {
-      throw new Error("Informe os dados do cartão para continuar.");
-    }
 
     const description = `Pedido Vértice — ${items.map((i) => i.name).join(", ")}`.slice(0, 500);
 
@@ -123,25 +109,6 @@ export const createOrder = createServerFn({ method: "POST" })
       description,
       externalReference: ref.id,
       dueDate: tomorrowIso(),
-      ...(data.paymentMethod === "CREDIT_CARD" && data.creditCard
-        ? {
-            creditCard: {
-              holderName: data.creditCard.holderName,
-              number: data.creditCard.number.replace(/\s/g, ""),
-              expiryMonth: data.creditCard.expiryMonth,
-              expiryYear: data.creditCard.expiryYear,
-              ccv: data.creditCard.ccv,
-            },
-            creditCardHolderInfo: {
-              name: data.payer.name,
-              email: data.payer.email,
-              cpfCnpj: data.payer.cpfCnpj,
-              postalCode: data.creditCard.postalCode,
-              addressNumber: data.creditCard.addressNumber,
-              phone: data.payer.phone,
-            },
-          }
-        : {}),
     });
 
     const status =

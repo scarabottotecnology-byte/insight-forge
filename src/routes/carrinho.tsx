@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Reveal } from "@/components/site/Reveal";
@@ -9,14 +9,10 @@ import { brl } from "@/lib/catalog";
 import { createOrder, getOrderStatus } from "@/lib/orders.functions";
 import { useProductCatalog } from "@/lib/product-catalog";
 
-// Checkout próprio (Asaas) foi desativado quando as vendas passaram para a Kiwify —
-// esta rota não tem mais nenhum ponto de entrada na UI, mas ficava alcançável por URL
-// direta e por itens salvos no localStorage de antes da mudança, levando a um "Finalizar
-// compra" que nunca entregava o arquivo (não há mais handler de download no site).
 export const Route = createFileRoute("/carrinho")({
-  beforeLoad: () => {
-    throw redirect({ to: "/produtos" });
-  },
+  head: () => ({
+    meta: [{ title: "Carrinho — Vértice" }, { name: "robots", content: "noindex" }],
+  }),
   component: CartPage,
 });
 
@@ -54,15 +50,6 @@ function CartPage() {
 
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("PIX");
   const [payer, setPayer] = useState({ name: "", email: "", cpfCnpj: "", phone: "" });
-  const [card, setCard] = useState({
-    number: "",
-    holderName: "",
-    expiryMonth: "",
-    expiryYear: "",
-    ccv: "",
-    postalCode: "",
-    addressNumber: "",
-  });
 
   useEffect(() => {
     if (!user) return;
@@ -122,19 +109,6 @@ function CartPage() {
         toast.error("Preencha nome, e-mail, CPF/CNPJ e telefone para continuar.");
         return;
       }
-      if (
-        paymentMethod === "CREDIT_CARD" &&
-        (!card.number.trim() ||
-          !card.holderName.trim() ||
-          !card.expiryMonth.trim() ||
-          !card.expiryYear.trim() ||
-          !card.ccv.trim() ||
-          !card.postalCode.trim() ||
-          !card.addressNumber.trim())
-      ) {
-        toast.error("Preencha todos os dados do cartão.");
-        return;
-      }
     }
 
     setSubmitting(true);
@@ -149,7 +123,6 @@ function CartPage() {
             ? {
                 paymentMethod,
                 payer,
-                ...(paymentMethod === "CREDIT_CARD" ? { creditCard: card } : {}),
               }
             : {}),
         },
@@ -159,6 +132,10 @@ function CartPage() {
         setDone(true);
       } else {
         setPending(response as PendingPayment);
+        // Card payments are completed on Asaas's secure page; open it right away.
+        if (response.paymentMethod === "CREDIT_CARD" && response.invoiceUrl) {
+          window.open(response.invoiceUrl, "_blank", "noopener");
+        }
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Não foi possível finalizar a compra.");
@@ -184,7 +161,7 @@ function CartPage() {
           <p className="label-micro text-primary">Pedido aprovado</p>
           <h1 className="display-section mt-8 max-w-2xl">Acesso liberado</h1>
           <p className="mt-6 max-w-md text-sm text-muted-foreground">
-            Os arquivos ficam disponíveis na sua área de downloads com links temporários e seguros.
+            Os arquivos já estão disponíveis para download em Minha conta → Minhas compras.
           </p>
           <div className="mt-12 flex flex-wrap justify-center gap-4">
             <Button asChild variant="champagne" size="editorial">
@@ -207,7 +184,9 @@ function CartPage() {
           <h1 className="display-section mt-8 max-w-2xl">
             {pending.paymentMethod === "PIX"
               ? "Escaneie ou copie o código Pix"
-              : "Seu boleto foi gerado"}
+              : pending.paymentMethod === "CREDIT_CARD"
+                ? "Conclua o pagamento com cartão"
+                : "Seu boleto foi gerado"}
           </h1>
 
           {pending.paymentMethod === "PIX" && pending.pixQrCodeImage && (
@@ -219,6 +198,20 @@ function CartPage() {
               />
               <Button variant="hairline" size="editorial" className="mt-6" onClick={copyPixCode}>
                 Copiar código Pix
+              </Button>
+            </>
+          )}
+
+          {pending.paymentMethod === "CREDIT_CARD" && pending.invoiceUrl && (
+            <>
+              <p className="mt-6 max-w-md text-sm text-muted-foreground">
+                O pagamento com cartão é feito na página segura do Asaas, nosso processador de
+                pagamentos. Se ela não abriu, use o botão abaixo.
+              </p>
+              <Button asChild variant="champagne" size="editorial" className="mt-10">
+                <a href={pending.invoiceUrl} target="_blank" rel="noreferrer">
+                  Pagar com cartão
+                </a>
               </Button>
             </>
           )}
@@ -372,60 +365,6 @@ function CartPage() {
                         </button>
                       ))}
                     </div>
-
-                    {paymentMethod === "CREDIT_CARD" && (
-                      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                        <input
-                          className={`${inputClass} sm:col-span-2`}
-                          placeholder="Número do cartão"
-                          inputMode="numeric"
-                          value={card.number}
-                          onChange={(e) => setCard((c) => ({ ...c, number: e.target.value }))}
-                        />
-                        <input
-                          className={`${inputClass} sm:col-span-2`}
-                          placeholder="Nome impresso no cartão"
-                          value={card.holderName}
-                          onChange={(e) => setCard((c) => ({ ...c, holderName: e.target.value }))}
-                        />
-                        <input
-                          className={inputClass}
-                          placeholder="Mês de validade (MM)"
-                          inputMode="numeric"
-                          value={card.expiryMonth}
-                          onChange={(e) => setCard((c) => ({ ...c, expiryMonth: e.target.value }))}
-                        />
-                        <input
-                          className={inputClass}
-                          placeholder="Ano de validade (AAAA)"
-                          inputMode="numeric"
-                          value={card.expiryYear}
-                          onChange={(e) => setCard((c) => ({ ...c, expiryYear: e.target.value }))}
-                        />
-                        <input
-                          className={inputClass}
-                          placeholder="CVV"
-                          inputMode="numeric"
-                          value={card.ccv}
-                          onChange={(e) => setCard((c) => ({ ...c, ccv: e.target.value }))}
-                        />
-                        <input
-                          className={inputClass}
-                          placeholder="CEP de cobrança"
-                          inputMode="numeric"
-                          value={card.postalCode}
-                          onChange={(e) => setCard((c) => ({ ...c, postalCode: e.target.value }))}
-                        />
-                        <input
-                          className={inputClass}
-                          placeholder="Número do endereço"
-                          value={card.addressNumber}
-                          onChange={(e) =>
-                            setCard((c) => ({ ...c, addressNumber: e.target.value }))
-                          }
-                        />
-                      </div>
-                    )}
                   </div>
                 )}
               </>
@@ -483,8 +422,8 @@ function CartPage() {
               {submitting ? "Finalizando…" : "Finalizar compra"}
             </Button>
             <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
-              Entrega digital imediata por link seguro e temporário. Ao continuar você concorda com
-              os{" "}
+              Entrega digital imediata em Minha conta assim que o pagamento é confirmado. Ao
+              continuar você concorda com os{" "}
               <Link to="/termos-de-uso" className="link-underline text-foreground">
                 termos de uso
               </Link>{" "}

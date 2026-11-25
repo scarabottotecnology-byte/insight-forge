@@ -1,5 +1,6 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { Check } from "lucide-react";
+import { toast } from "sonner";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal } from "@/components/site/Reveal";
 import {
@@ -9,6 +10,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/lib/cart";
 import { brl } from "@/lib/catalog";
 import { getOrigin } from "@/lib/origin.functions";
 import { useProductCatalog } from "@/lib/product-catalog";
@@ -111,7 +113,20 @@ function ProductPage() {
     .filter((p) => p.slug !== product.slug && p.type === "Kit")
     .slice(0, 1)[0];
 
-  const buyLabel = product.price === 0 ? "Obter gratuitamente" : "Comprar na Kiwify";
+  const { add, has } = useCart();
+  const navigate = useNavigate();
+  const inCart = has(product.slug);
+  const buyLabel = product.price === 0 ? "Obter gratuitamente" : "Comprar agora";
+
+  const buyNow = () => {
+    add(product.slug);
+    navigate({ to: "/carrinho" });
+  };
+
+  const addToCart = () => {
+    add(product.slug);
+    toast.success("Adicionado ao carrinho", { description: product.name });
+  };
 
   return (
     <>
@@ -169,15 +184,12 @@ function ProductPage() {
             </div>
 
             <div className="mt-8 flex flex-wrap gap-4">
-              {product.kiwifyUrl ? (
-                <Button asChild variant="champagne" size="editorial">
-                  <a href={product.kiwifyUrl} target="_blank" rel="noopener noreferrer">
-                    {buyLabel}
-                  </a>
-                </Button>
-              ) : (
-                <Button variant="champagne" size="editorial" disabled>
-                  Em breve
+              <Button variant="champagne" size="editorial" onClick={buyNow}>
+                {buyLabel}
+              </Button>
+              {product.price > 0 && (
+                <Button variant="hairline" size="editorial" onClick={addToCart} disabled={inCart}>
+                  {inCart ? "No carrinho" : "Adicionar ao carrinho"}
                 </Button>
               )}
             </div>
@@ -345,17 +357,9 @@ function ProductPage() {
             Comece a usar {product.name.toLowerCase()} hoje
           </h2>
           <div className="mt-12 flex justify-center">
-            {product.kiwifyUrl ? (
-              <Button asChild variant="champagne" size="editorial">
-                <a href={product.kiwifyUrl} target="_blank" rel="noopener noreferrer">
-                  {buyLabel} — {brl(product.price)}
-                </a>
-              </Button>
-            ) : (
-              <Button variant="champagne" size="editorial" disabled>
-                Em breve
-              </Button>
-            )}
+            <Button variant="champagne" size="editorial" onClick={buyNow}>
+              {buyLabel} — {brl(product.price)}
+            </Button>
           </div>
         </div>
       </section>

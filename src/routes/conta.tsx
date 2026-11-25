@@ -1,9 +1,18 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { LifeBuoy, Receipt, User } from "lucide-react";
-import { useEffect } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import type { User as FirebaseUser } from "firebase/auth";
+import { Download, LifeBuoy, Receipt, User } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/lib/auth";
+import { brl } from "@/lib/catalog";
+import {
+  downloadDeliverable,
+  getMyLibrary,
+  type LibraryOrder,
+  type LibraryProduct,
+} from "@/lib/library.functions";
 
 export const Route = createFileRoute("/conta")({
   head: () => ({
@@ -82,12 +91,8 @@ function Account() {
               ))}
             </TabsList>
 
-            <TabsContent value="compras" className="mt-12 max-w-md">
-              <p className="text-sm text-muted-foreground">
-                Suas compras são processadas e entregues pela Kiwify. O acesso aos arquivos e a
-                nota fiscal chegam por e-mail assim que o pagamento é confirmado, e ficam
-                disponíveis também na área de membros da Kiwify.
-              </p>
+            <TabsContent value="compras" className="mt-12">
+              <Purchases user={user} />
             </TabsContent>
 
             <TabsContent value="dados" className="mt-12">
@@ -112,5 +117,178 @@ function Account() {
         </div>
       </section>
     </>
+  );
+}
+
+const STATUS_LABEL: Record<LibraryOrder["status"], string> = {
+  pending: "Aguardando pagamento",
+  paid: "Pago",
+  refunded: "Reembolsado",
+  canceled: "Cancelado",
+};
+
+function formatSize(bytes: number) {
+  return bytes >= 1024 * 1024
+    ? `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+    : `${Math.max(1, Math.round(bytes / 1024))} KB`;
+}
+
+function saveBase64File(name: string, mimeType: string, base64: string) {
+  const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+  const url = URL.createObjectURL(new Blob([bytes], { type: mimeType }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+}
+
+function Purchases({ user }: { user: FirebaseUser }) {
+  const [products, setProducts] = useState<LibraryProduct[] | null>(null);
+  const [orders, setOrders] = useState<LibraryOrder[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const idToken = await user.getIdToken();
+        const library = await getMyLibrary({ data: { idToken } });
+        if (cancelled) return;
+        setProducts(library.products);
+        setOrders(library.orders);
+      } catch (e) {
+        if (!cancelled)
+          setError(e instanceof Error ? e.message : "Não foi possível carregar suas compras.");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  const download = async (slug: string, file: string) => {
+    setDownloading(`${slug}/${file}`);
+    try {
+      const idToken = await user.getIdToken();
+      const result = await downloadDeliverable({ data: { idToken, slug, file } });
+      saveBase64File(result.name, result.mimeType, result.base64);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Não foi possível baixar o arquivo.");
+    } finally {
+      setDownloading(null);
+    }
+  };
+
+  if (error) return <p className="text-sm text-destructive">{error}</p>;
+  if (!products)
+    return <p className="label-micro text-muted-foreground">Carregando suas compras…</p>;
+
+  const pendingOrders = orders.filter((o) => o.status === "pending");
+
+  return (
+    <div className="grid gap-16">
+      <div>
+        <p className="label-micro text-accent-foreground">Meus produtos</p>
+        {products.length === 0 ? (
+          <div className="mt-6 max-w-md border border-border p-8">
+            <p className="text-sm text-muted-foreground">
+              Você ainda não tem compras confirmadas. Assim que um pagamento for aprovado, os
+              arquivos aparecem aqui para download.
+            </p>
+            <Button asChild variant="ink" size="editorial" className="mt-6">
+              <Link to="/produtos">Explorar produtos</Link>
+            </Button>
+          </div>
+        ) : (
+          <ul className="mt-6 divide-y divide-border border-y border-border">
+            {products.map((p) => (
+              <li key={p.slug} className="py-8">
+                <div className="flex flex-wrap items-baseline justify-between gap-4">
+                  <Link
+                    to="/produtos/$slug"
+                    params={{ slug: p.slug }}
+                    className="link-underline font-display text-xl"
+                  >
+                    {p.name}
+                  </Link>
+                  <span className="text-xs text-muted-foreground">
+                    Comprado em {new Date(p.purchasedAt).toLocaleDateString("pt-BR")}
+                  </span>
+                </div>
+                <ul className="mt-5 grid gap-2">
+                  {p.files.map((f) => (
+                    <li key={f.name}>
+                      <button
+                        type="button"
+                        onClick={() => download(p.slug, f.name)}
+                        disabled={downloading !== null}
+                        className="flex w-full items-center justify-between gap-4 border border-border px-4 py-3 text-left text-sm transition-colors hover:border-accent-foreground disabled:opacity-60"
+                      >
+                        <span className="flex items-center gap-3">
+                          <Download className="h-4 w-4 shrink-0" />
+                          {f.label}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {downloading === `${p.slug}/${f.name}` ? "Baixando…" : formatSize(f.size)}
+                        </span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {pendingOrders.length > 0 && (
+        <div>
+          <p className="label-micro text-accent-foreground">Aguardando pagamento</p>
+          <ul className="mt-6 divide-y divide-border border-y border-border">
+            {pendingOrders.map((o) => (
+              <li key={o.id} className="flex flex-wrap items-center justify-between gap-4 py-5">
+                <span className="text-sm">{o.items.map((i) => i.name).join(", ")}</span>
+                <span className="flex items-center gap-6">
+                  <span className="text-sm">{brl(o.total)}</span>
+                  {o.invoiceUrl && (
+                    <a
+                      href={o.invoiceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="label-micro link-underline text-accent-foreground"
+                    >
+                      Pagar
+                    </a>
+                  )}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {orders.length > 0 && (
+        <div>
+          <p className="label-micro text-accent-foreground">Histórico de pedidos</p>
+          <ul className="mt-6 divide-y divide-border border-y border-border text-sm">
+            {orders.map((o) => (
+              <li key={o.id} className="flex flex-wrap justify-between gap-4 py-4">
+                <span>
+                  {new Date(o.createdAt).toLocaleDateString("pt-BR")} ·{" "}
+                  {o.items.map((i) => i.name).join(", ")}
+                </span>
+                <span className="text-muted-foreground">
+                  {STATUS_LABEL[o.status]} · {brl(o.total)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
   );
 }
