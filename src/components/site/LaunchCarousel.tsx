@@ -152,9 +152,13 @@ function Cover({ launch }: { launch: Launch }) {
       className="relative mx-auto flex aspect-[3/4] w-full max-w-[300px] flex-col justify-between p-6 shadow-editorial"
       style={{ background: `linear-gradient(160deg, ${launch.bg[0]}, ${launch.bg[1]})`, color: "#F3EFE6" }}
     >
-      <div className="flex items-center justify-between text-[9px] font-medium tracking-[0.22em]" style={{ color: launch.accent }}>
-        <span>VERTICEBOOKS · ESTANTE DO EMPRESÁRIO</span>
-        <span>Nº {launch.number}</span>
+      <div className="flex items-start justify-between gap-3 text-[8.5px] font-medium leading-[1.5] tracking-[0.18em]" style={{ color: launch.accent }}>
+        <span>
+          VERTICEBOOKS
+          <br />
+          ESTANTE DO EMPRESÁRIO
+        </span>
+        <span className="whitespace-nowrap">Nº {launch.number}</span>
       </div>
       <div className="mt-4 h-[34%]">
         <CoverArt launch={launch} />
@@ -207,7 +211,7 @@ function NotifyForm({ launch }: { launch: Launch }) {
         placeholder="seu@e-mail.com"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="h-12 flex-1 border bg-transparent px-4 text-sm text-[#F3EFE6] placeholder:text-[#F3EFE6]/50 focus:outline-none"
+        className="h-12 w-full min-h-12 border bg-transparent sm:w-auto sm:flex-1 px-4 text-sm text-[#F3EFE6] placeholder:text-[#F3EFE6]/50 focus:outline-none"
         style={{ borderColor: `${launch.accent}80` }}
       />
       <Button
