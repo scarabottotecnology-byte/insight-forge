@@ -8,14 +8,9 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal } from "@/components/site/Reveal";
 import { ScrollProgress } from "@/components/site/ScrollProgress";
 import { Shelf } from "@/components/site/Shelf";
+import { LaunchCarousel } from "@/components/site/LaunchCarousel";
+import { CollectionShelf } from "@/components/site/CollectionShelf";
 import { Button } from "@/components/ui/button";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { brl, type Product } from "@/lib/catalog";
 import { db } from "@/lib/firebase";
 import { useProductCatalog } from "@/lib/product-catalog";
@@ -82,16 +77,6 @@ const trust = [
   { label: "Atualizações vitalícias", note: "Novas versões sem custo" },
 ];
 
-const partnerSlides = [
-  {
-    eyebrow: "Parceiro Vértice",
-    title: "Conheça nossas soluções de consultoria",
-    description:
-      "Diagnóstico, indicadores e acompanhamento sob medida pela Keystone — para quem precisa de mais do que uma ferramenta pronta.",
-    cta: "Conhecer a Keystone",
-    href: "https://keystone-phi.vercel.app",
-  },
-];
 
 function Home() {
   const { journal } = Route.useLoaderData();
@@ -113,9 +98,12 @@ function Home() {
   return (
     <>
       <ScrollProgress />
+      {/* LANÇAMENTOS */}
+      <LaunchCarousel />
+
       {/* HERO */}
       <section className="band-dark relative overflow-hidden">
-        <div className="container-editorial grid min-h-[86svh] items-center gap-16 pt-36 pb-24 lg:grid-cols-[1.05fr_0.95fr] lg:pt-40">
+        <div className="container-editorial grid min-h-[86svh] items-center gap-16 pt-20 pb-24 lg:grid-cols-[1.05fr_0.95fr] lg:pt-24">
           <div>
             <Reveal>
               <p className="label-micro text-primary">Boutique digital de ferramentas profissionais</p>
@@ -168,39 +156,8 @@ function Home() {
         </div>
       </section>
 
-      {/* DESTAQUE: PARCEIROS */}
-      <section className="band-dark border-b border-border">
-        <div className="container-editorial py-16 lg:py-20">
-          <Carousel className="relative">
-            <CarouselContent>
-              {partnerSlides.map((slide) => (
-                <CarouselItem key={slide.title}>
-                  <Reveal className="flex flex-col items-start gap-8 border border-primary/40 bg-secondary p-10 lg:flex-row lg:items-center lg:justify-between lg:p-16">
-                    <div className="max-w-xl">
-                      <p className="label-micro text-accent-foreground">{slide.eyebrow}</p>
-                      <h2 className="display-section mt-6">{slide.title}</h2>
-                      <p className="mt-6 text-base leading-relaxed text-muted-foreground">
-                        {slide.description}
-                      </p>
-                    </div>
-                    <Button asChild variant="champagne" size="editorial" className="shrink-0">
-                      <a href={slide.href} target="_blank" rel="noopener noreferrer">
-                        {slide.cta}
-                      </a>
-                    </Button>
-                  </Reveal>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            {partnerSlides.length > 1 && (
-              <>
-                <CarouselPrevious className="left-2 border-primary/40 bg-secondary text-primary lg:-left-5" />
-                <CarouselNext className="right-2 border-primary/40 bg-secondary text-primary lg:-right-5" />
-              </>
-            )}
-          </Carousel>
-        </div>
-      </section>
+      {/* COLEÇÃO: ESTANTE DO EMPRESÁRIO */}
+      <CollectionShelf />
 
       {/* TRUST BAR */}
       <section className="band-light border-y border-border">
