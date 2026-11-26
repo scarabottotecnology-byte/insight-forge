@@ -24,7 +24,7 @@ const creditCardSchema = z.object({
 
 const inputSchema = z.object({
   idToken: z.string().min(1),
-  items: z.array(z.object({ slug: z.string().min(1), qty: z.number().int().positive() })).min(1),
+  items: z.array(z.object({ slug: z.string().min(1), qty: z.number().int().positive().max(100) })).min(1).max(50),
   couponCode: z.string().optional(),
   paymentMethod: z.enum(["PIX", "BOLETO", "CREDIT_CARD"]).optional(),
   payer: payerSchema.optional(),
